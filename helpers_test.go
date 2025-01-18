@@ -58,7 +58,7 @@ func TestFailCompare(t *testing.T) {
 		actual    any
 		expected  any
 		msg       []string
-		wantParts []string // Parties du message d'erreur attendues
+		wantParts []string
 	}{
 		{
 			name:     "basic types with message",
@@ -106,12 +106,10 @@ func TestFailCompare(t *testing.T) {
 
 			errorMsg := recorder.ErrorMessage()
 
-			// Vérifie que le message contient un numéro de ligne
 			if !strings.Contains(errorMsg, ".go:") {
 				t.Error("failCompare() message missing file location")
 			}
 
-			// Vérifie la présence de chaque partie attendue du message
 			for _, part := range tt.wantParts {
 				if !strings.Contains(errorMsg, part) {
 					t.Errorf("failCompare() message missing %q\ngot: %s",
