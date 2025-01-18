@@ -3,6 +3,11 @@
 A lightweight and type-safe assertion package for Go tests that prioritizes readability and clear error messages.
 
 [![Golang](https://img.shields.io/badge/Go-%3E%3D%201.18-%2300ADD8.svg)](https://go.dev/)
+[![Tests](https://github.com/nanoninja/assert/actions/workflows/tests.yml/badge.svg)](https://github.com/nanoninja/assert/actions)
+[![codecov](https://codecov.io/gh/nanoninja/assert/branch/main/graph/badge.svg)](https://codecov.io/gh/nanoninja/assert)
+[![Go Reference](https://pkg.go.dev/badge/github.com/nanoninja/assert.svg)](https://pkg.go.dev/github.com/nanoninja/assert)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nanoninja/assert)](https://goreportcard.com/report/github.com/nanoninja/assert)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ## Requirements
 
