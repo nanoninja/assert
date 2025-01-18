@@ -265,37 +265,37 @@ func TestHasSuffix(t *testing.T) {
 func TestLen(t *testing.T) {
 	tests := []struct {
 		name       string
-		colleciton any
+		collection any
 		expected   int
 		wantError  bool
 	}{
 		{
 			name:       "correct slice length",
-			colleciton: []int{1, 2, 3},
+			collection: []int{1, 2, 3},
 			expected:   3,
 			wantError:  false,
 		},
 		{
 			name:       "incorrect slice length",
-			colleciton: []int{1, 2},
+			collection: []int{1, 2},
 			expected:   3,
 			wantError:  true,
 		},
 		{
 			name:       "correct map length",
-			colleciton: map[string]int{"a": 1, "b": 2},
+			collection: map[string]int{"a": 1, "b": 2},
 			expected:   2,
 			wantError:  false,
 		},
 		{
 			name:       "correct string length",
-			colleciton: "hello",
+			collection: "hello",
 			expected:   5,
 			wantError:  false,
 		},
 		{
 			name:       "invalid type",
-			colleciton: 42,
+			collection: 42,
 			expected:   0,
 			wantError:  true,
 		},
@@ -305,7 +305,7 @@ func TestLen(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
 
-			Len(rec, tt.colleciton, tt.expected)
+			Len(rec, tt.collection, tt.expected)
 
 			if tt.wantError != rec.HasError() {
 				t.Errorf("Len() error = %v, want %v", rec.HasError(), tt.wantError)

@@ -35,7 +35,7 @@ func Empty(t testing.TB, collection any, msg ...string) {
 	case reflect.Slice, reflect.Array, reflect.Map, reflect.String:
 		if v.Len() != 0 {
 			failCompare(t,
-				"empty colleciton",
+				"empty collection",
 				fmt.Sprintf("collection with length %d", v.Len()),
 				msg...,
 			)
