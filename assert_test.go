@@ -194,8 +194,8 @@ func TestErrorAs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
-
 			var target *testError
+
 			ErrorAs(rec, tt.err, &target)
 
 			if tt.wantError != rec.HasError() {

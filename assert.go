@@ -95,7 +95,7 @@ func NotNil(t testing.TB, value any) {
 	t.Helper()
 
 	if isNil(value) {
-		t.Errorf("\n%s\nexpected value to not be nil", location())
+		t.Error("\nexpected value to not be nil")
 	}
 }
 
@@ -110,7 +110,7 @@ func Panics(t testing.TB, fn func(), expectedMsg string) {
 				failCompare(t, expectedMsg, actualMsg, "unexpected panic message")
 			}
 		} else {
-			t.Errorf("\n%s\nExpected panic: %v\n  Actual: no panic", location(), expectedMsg)
+			t.Errorf("\nExpected panic: %v\n  Actual: no panic", expectedMsg)
 		}
 	}()
 

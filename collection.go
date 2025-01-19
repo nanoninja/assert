@@ -41,7 +41,7 @@ func Empty(t testing.TB, collection any, msg ...string) {
 			)
 		}
 	default:
-		t.Errorf("\n%s\nEmpty called with unsupported type: %T", location(), collection)
+		t.Errorf("\nEmpty() called with unsupported type: (%T)", collection)
 	}
 }
 
@@ -88,7 +88,7 @@ func Len(t testing.TB, collection any, expected int) {
 			failCompare(t, expected, v.Len(), "unexpected length")
 		}
 	default:
-		t.Errorf("\n%s\nLen called with unsupported type: %T", location(), collection)
+		t.Errorf("\nLen called with unsupported type: %T", collection)
 	}
 }
 
