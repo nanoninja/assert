@@ -122,12 +122,24 @@ func isNil(value any) bool {
 	}
 }
 
-// location returns the file and line number where the assertion was called.
-// This helps identify the exact location of test failures.
-func location() string {
-	_, file, line, ok := runtime.Caller(2)
+// callerFunc defines a function type that matches runtime.Caller signature.
+// This abstraction allows us to inject different caller behaviors for testing.
+type callerFunc func(skip int) (pc uintptr, file string, line int, ok bool)
+
+// locationWith returns a formatted string indicating the source file and line number
+// using a provided caller function. This allows for testing the error path
+// by injecting a mock caller function.
+func locationWith(f callerFunc) string {
+	_, file, line, ok := f(2)
 	if !ok {
 		return "unknown location"
 	}
 	return fmt.Sprintf("%s:%d", filepath.Base(file), line)
+}
+
+// location returns a formatted string indicating the source file and line number
+// where this function was called. It uses runtime.Caller internally to retrieve
+// this information.
+func location() string {
+	return locationWith(runtime.Caller)
 }

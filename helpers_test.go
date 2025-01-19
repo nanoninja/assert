@@ -249,21 +249,26 @@ func TestIsNil(t *testing.T) {
 }
 
 func TestLocation(t *testing.T) {
-	// Helper function that will give us a predictable location
-	getLocation := func() string {
-		return location()
-	}
+	t.Run("normal case", func(t *testing.T) {
+		loc := location()
+		matched, err := regexp.MatchString(`\w+\.go:\d+`, loc)
+		if err != nil {
+			t.Fatalf("regex match failed: %v", err)
+		}
+		if !matched {
+			t.Errorf("location() = %v, want pattern file.go:line", loc)
+		}
+	})
 
-	// Get the location
-	loc := getLocation()
+	t.Run("caller not available", func(t *testing.T) {
+		// Mock function qui simule l'échec de runtime.Caller
+		mockCaller := func(skip int) (pc uintptr, file string, line int, ok bool) {
+			return 0, "", 0, false
+		}
 
-	// When called from our helper function, the location should point
-	// to this test file (helpers_test.go)
-	matched, err := regexp.MatchString("helpers_test.go:\\d+", loc)
-	if err != nil {
-		t.Fatalf("regex match failed: %v", err)
-	}
-	if !matched {
-		t.Errorf("location() = %v, want pattern %v", loc, "helpers_test.go:\\d+")
-	}
+		result := locationWith(mockCaller)
+		if result != "unknown location" {
+			t.Errorf("locationWith(mockCaller) = %v, want 'unknown location'", result)
+		}
+	})
 }
