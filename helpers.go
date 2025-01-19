@@ -5,9 +5,7 @@ package assert
 
 import (
 	"fmt"
-	"path/filepath"
 	"reflect"
-	"runtime"
 	"strings"
 	"testing"
 )
@@ -79,18 +77,17 @@ func failCompare[T any](t testing.TB, actual, expected T, msg ...string) {
 	t.Helper()
 
 	var builder strings.Builder
-	builder.WriteString(fmt.Sprintf("\n%s\n", location()))
 
 	if len(msg) > 0 && msg[0] != "" {
-		builder.WriteString(fmt.Sprintf("Message: %s\n", msg[0]))
+		builder.WriteString(fmt.Sprintf("\n Message: %s", msg[0]))
 	}
 
 	// Get the types of both values for more informative error messages
 	exptectedType := reflect.TypeOf(actual)
 	actualType := reflect.TypeOf(expected)
 
-	// Build the error message
-	builder.WriteString(fmt.Sprintf("Expected: (%v) %#v\n", exptectedType, expected))
+	// Build the error messageyy
+	builder.WriteString(fmt.Sprintf("\nExpected: (%v) %#v\n", exptectedType, expected))
 	builder.WriteString(fmt.Sprintf("  Actual: (%v) %#v\n", actualType, actual))
 
 	t.Error(builder.String())
@@ -120,26 +117,4 @@ func isNil(value any) bool {
 	default:
 		return false
 	}
-}
-
-// callerFunc defines a function type that matches runtime.Caller signature.
-// This abstraction allows us to inject different caller behaviors for testing.
-type callerFunc func(skip int) (pc uintptr, file string, line int, ok bool)
-
-// locationWith returns a formatted string indicating the source file and line number
-// using a provided caller function. This allows for testing the error path
-// by injecting a mock caller function.
-func locationWith(f callerFunc) string {
-	_, file, line, ok := f(2)
-	if !ok {
-		return "unknown location"
-	}
-	return fmt.Sprintf("%s:%d", filepath.Base(file), line)
-}
-
-// location returns a formatted string indicating the source file and line number
-// where this function was called. It uses runtime.Caller internally to retrieve
-// this information.
-func location() string {
-	return locationWith(runtime.Caller)
 }

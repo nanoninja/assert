@@ -4,7 +4,6 @@
 package assert
 
 import (
-	"regexp"
 	"strings"
 	"testing"
 )
@@ -45,8 +44,7 @@ func TestCompare(t *testing.T) {
 
 		for _, part := range expectedParts {
 			if !strings.Contains(errorMsg, part) {
-				t.Errorf("incorrect error message\nwant: %q\nin: %q",
-					part, errorMsg)
+				t.Errorf("incorrect error message\nwant: %q\nin: %q", part, errorMsg)
 			}
 		}
 	})
@@ -96,24 +94,19 @@ func TestFailCompare(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			recorder := NewTestRecorder(t)
+			rec := NewTestRecorder(t)
 
-			failCompare(recorder, tt.actual, tt.expected, tt.msg...)
+			failCompare(rec, tt.actual, tt.expected, tt.msg...)
 
-			if !recorder.HasError() {
+			if !rec.HasError() {
 				t.Error("failCompare() did not record error")
 			}
 
-			errorMsg := recorder.ErrorMessage()
-
-			if !strings.Contains(errorMsg, ".go:") {
-				t.Error("failCompare() message missing file location")
-			}
+			errorMsg := rec.ErrorMessage()
 
 			for _, part := range tt.wantParts {
 				if !strings.Contains(errorMsg, part) {
-					t.Errorf("failCompare() message missing %q\ngot: %s",
-						part, errorMsg)
+					t.Errorf("failCompare() message missing %q\ngot: %s", part, errorMsg)
 				}
 			}
 		})
@@ -246,29 +239,4 @@ func TestIsNil(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestLocation(t *testing.T) {
-	t.Run("normal case", func(t *testing.T) {
-		loc := location()
-		matched, err := regexp.MatchString(`\w+\.go:\d+`, loc)
-		if err != nil {
-			t.Fatalf("regex match failed: %v", err)
-		}
-		if !matched {
-			t.Errorf("location() = %v, want pattern file.go:line", loc)
-		}
-	})
-
-	t.Run("caller not available", func(t *testing.T) {
-		// Mock function qui simule l'échec de runtime.Caller
-		mockCaller := func(skip int) (pc uintptr, file string, line int, ok bool) {
-			return 0, "", 0, false
-		}
-
-		result := locationWith(mockCaller)
-		if result != "unknown location" {
-			t.Errorf("locationWith(mockCaller) = %v, want 'unknown location'", result)
-		}
-	})
 }
