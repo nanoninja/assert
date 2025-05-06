@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestEquals(t *testing.T) {
+func TestEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		actual    any
@@ -89,10 +89,10 @@ func TestEquals(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
 
-			Equals(rec, tt.actual, tt.expected, tt.msg...)
+			Equal(rec, tt.actual, tt.expected, tt.msg...)
 
 			if tt.wantError != rec.HasError() {
-				t.Errorf("Equals() error = %v, want %v", rec.HasError(), tt.wantError)
+				t.Errorf("Equal() error = %v, want %v", rec.HasError(), tt.wantError)
 			}
 		})
 	}

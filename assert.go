@@ -9,9 +9,9 @@ import (
 	"testing"
 )
 
-// Equals checks if two values are equal using reflection.DeepEqual.
+// Equal checks if two values are equal using reflection.DeepEqual.
 // It provides detailed error messages showing both values and their types when they differ.
-func Equals[T any](t testing.TB, actual, expected T, msg ...string) {
+func Equal[T any](t testing.TB, actual, expected T, msg ...string) {
 	t.Helper()
 
 	compare(t, expected, actual, msg...)
