@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestEquals(t *testing.T) {
+func TestEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		actual    any
@@ -89,16 +89,16 @@ func TestEquals(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
 
-			Equals(rec, tt.actual, tt.expected, tt.msg...)
+			Equal(rec, tt.actual, tt.expected, tt.msg...)
 
 			if tt.wantError != rec.HasError() {
-				t.Errorf("Equals() error = %v, want %v", rec.HasError(), tt.wantError)
+				t.Errorf("Equal() error = %v, want %v", rec.HasError(), tt.wantError)
 			}
 		})
 	}
 }
 
-func TestError(t *testing.T) {
+func TestEqualError(t *testing.T) {
 	errOne := errors.New("error one")
 	errTwo := errors.New("error two")
 
@@ -143,7 +143,36 @@ func TestError(t *testing.T) {
 	for _, tt := range tests {
 		rec := NewTestRecorder(t)
 
-		Error(rec, tt.actual, tt.expected)
+		EqualError(rec, tt.actual, tt.expected)
+
+		if tt.wantError != rec.HasError() {
+			t.Errorf("Error() error %v, want %v", rec.HasError(), tt.wantError)
+		}
+	}
+}
+
+func TestError(t *testing.T) {
+	tests := []struct {
+		name      string
+		actual    error
+		wantError bool
+	}{
+		{
+			name:      "non-nil error",
+			actual:    errors.New("test error"),
+			wantError: false,
+		},
+		{
+			name:      "nil error",
+			actual:    nil,
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		rec := NewTestRecorder(t)
+
+		Error(rec, tt.actual)
 
 		if tt.wantError != rec.HasError() {
 			t.Errorf("Error() error %v, want %v", rec.HasError(), tt.wantError)
@@ -363,7 +392,36 @@ func TestNil(t *testing.T) {
 	}
 }
 
-func TestNotEquals(t *testing.T) {
+func TestNoError(t *testing.T) {
+	tests := []struct {
+		name      string
+		actual    error
+		wantError bool
+	}{
+		{
+			name:      "nil error",
+			actual:    nil,
+			wantError: false,
+		},
+		{
+			name:      "non-nil error",
+			actual:    errors.New("test error"),
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		rec := NewTestRecorder(t)
+
+		NoError(rec, tt.actual)
+
+		if tt.wantError != rec.HasError() {
+			t.Errorf("NoError() error %v, want %v", rec.HasError(), tt.wantError)
+		}
+	}
+}
+
+func TestNotEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		actual    any
@@ -402,10 +460,10 @@ func TestNotEquals(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
 
-			NotEquals(rec, tt.actual, tt.expected, tt.msg...)
+			NotEqual(rec, tt.actual, tt.expected, tt.msg...)
 
 			if tt.wantError != rec.HasError() {
-				t.Errorf("NotEquals() error %v, want %v", rec.HasError(), tt.wantError)
+				t.Errorf("NotEqual() error %v, want %v", rec.HasError(), tt.wantError)
 			}
 		})
 	}

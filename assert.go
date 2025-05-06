@@ -9,17 +9,17 @@ import (
 	"testing"
 )
 
-// Equals checks if two values are equal using reflection.DeepEqual.
+// Equal checks if two values are equal using reflection.DeepEqual.
 // It provides detailed error messages showing both values and their types when they differ.
-func Equals[T any](t testing.TB, actual, expected T, msg ...string) {
+func Equal[T any](t testing.TB, actual, expected T, msg ...string) {
 	t.Helper()
 
 	compare(t, expected, actual, msg...)
 }
 
-// Error checks if an error matches the expected error.
+// EqualError checks if an error matches the expected error.
 // It handles nil errors appropriately and provides clear error messages.
-func Error(t testing.TB, actual, expected error) {
+func EqualError(t testing.TB, actual, expected error) {
 	t.Helper()
 
 	if actual == nil && expected != nil {
@@ -30,6 +30,16 @@ func Error(t testing.TB, actual, expected error) {
 	}
 	if actual != expected {
 		failCompare(t, expected, actual)
+	}
+}
+
+// Error asserts that an error occurred (i.e., the error is not nil).
+// It fails the test if the error is nil, providing a clear error message.
+func Error(t testing.TB, err error, msg ...string) {
+	t.Helper()
+
+	if isNil(err) {
+		failCompare[any](t, "non-nil error", nil, append([]string{"expected an error"}, msg...)...)
 	}
 }
 
@@ -74,10 +84,20 @@ func Nil(t testing.TB, value any) {
 	}
 }
 
-// NotEquals asserts that two values are not equal.
+// NoError asserts that no error occurred (i.e., the error is nil).
+// It fails the test if an error is not nil, providing a clear error message showing the unexpected error.
+func NoError(t testing.TB, err error, msg ...string) {
+	t.Helper()
+
+	if !isNil(err) {
+		failCompare[any](t, nil, err, append([]string{"unexpected error"}, msg...)...)
+	}
+}
+
+// NotEqual asserts that two values are not equal.
 // This is particularly useful when testing that a value has changed
 // or that distinct objects remain separate.
-func NotEquals[T any](t testing.TB, actual, expected T, msg ...string) {
+func NotEqual[T any](t testing.TB, actual, expected T, msg ...string) {
 	t.Helper()
 
 	if isEqual(actual, expected) {
