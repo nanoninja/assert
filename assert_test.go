@@ -98,7 +98,7 @@ func TestEquals(t *testing.T) {
 	}
 }
 
-func TestError(t *testing.T) {
+func TestEqualError(t *testing.T) {
 	errOne := errors.New("error one")
 	errTwo := errors.New("error two")
 
@@ -143,7 +143,7 @@ func TestError(t *testing.T) {
 	for _, tt := range tests {
 		rec := NewTestRecorder(t)
 
-		Error(rec, tt.actual, tt.expected)
+		EqualError(rec, tt.actual, tt.expected)
 
 		if tt.wantError != rec.HasError() {
 			t.Errorf("Error() error %v, want %v", rec.HasError(), tt.wantError)
