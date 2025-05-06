@@ -8,4 +8,4 @@ linters:
     - gosimple
 
 run:
-  deadline: 5m
+  timeout: 5m
