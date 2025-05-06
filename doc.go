@@ -10,7 +10,7 @@
 //
 //	func TestExample(t *testing.T) {
 //	    result := Calculate(2, 3)
-//	    assert.Equals(t, result, 5)
+//	    assert.Equal(t, result, 5)
 //
 //	    user := GetUser()
 //	    assert.NotNil(t, user)
@@ -20,15 +20,17 @@
 // The package includes several categories of assertions:
 //
 // Basic Comparisons:
-//   - Equals/NotEquals: Compare values of any type
+//   - Equal/NotEqual: Compare values of any type
 //   - True/False: Boolean assertions
 //   - Nil/NotNil: Check for nil values
 //
 // Error Handling:
-//   - Error: Compare error values directly
-//   - ErrorIs: Check if an error matches a specific error value, even when wrapped
-//   - ErrorAs: Check and extract typed errors from error chains
-//   - Panics: Test for panic conditions
+//   - Error: Assert that an error occurred (i.e., the error is not nil).
+//   - NoError: Assert that no error occurred (i.e., the error is nil).
+//   - EqualError: Assert that the error returned (if any) is equal to the expected error (compares error messages).
+//   - ErrorIs: Check if an error matches a specific error value anywhere in its chain of wrapped errors.
+//   - ErrorAs: Check if an error (or any error it wraps) matches a specific error type and extracts it.
+//   - Panics: Test for panic conditions.
 //
 // Collection Operations:
 //   - Contains/NotContains: Check if a slice contains (or not) an element
