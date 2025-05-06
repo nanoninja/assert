@@ -421,7 +421,7 @@ func TestNoError(t *testing.T) {
 	}
 }
 
-func TestNotEquals(t *testing.T) {
+func TestNotEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		actual    any
@@ -460,10 +460,10 @@ func TestNotEquals(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
 
-			NotEquals(rec, tt.actual, tt.expected, tt.msg...)
+			NotEqual(rec, tt.actual, tt.expected, tt.msg...)
 
 			if tt.wantError != rec.HasError() {
-				t.Errorf("NotEquals() error %v, want %v", rec.HasError(), tt.wantError)
+				t.Errorf("NotEqual() error %v, want %v", rec.HasError(), tt.wantError)
 			}
 		})
 	}

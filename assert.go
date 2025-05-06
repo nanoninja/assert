@@ -94,10 +94,10 @@ func NoError(t testing.TB, err error, msg ...string) {
 	}
 }
 
-// NotEquals asserts that two values are not equal.
+// NotEqual asserts that two values are not equal.
 // This is particularly useful when testing that a value has changed
 // or that distinct objects remain separate.
-func NotEquals[T any](t testing.TB, actual, expected T, msg ...string) {
+func NotEqual[T any](t testing.TB, actual, expected T, msg ...string) {
 	t.Helper()
 
 	if isEqual(actual, expected) {
