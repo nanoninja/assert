@@ -33,11 +33,11 @@ go get github.com/nanoninja/assert
 ```go
 func TestExample(t *testing.T) {
     // Basic equality
-    assert.Equals(t, Calculate(2, 3), 5)
+    assert.Equal(t, Calculate(2, 3), 5)
 
     // Error checking
     err := Process()
-    assert.Error(t, err, ErrExpected)
+    assert.EqualError(t, err, ErrExpected)
 
     // Collection operations
     users := []string{"alice", "bob"}
@@ -63,8 +63,8 @@ func TestExample(t *testing.T) {
 ### Basic Comparisons
 
 ```go
-assert.Equals(t, Calculate(2, 3), 5)
-assert.NotEquals(t, user1, user2)
+assert.Equal(t, Calculate(2, 3), 5)
+assert.NotEqual(t, user1, user2)
 
 assert.True(t, IsValid())
 assert.False(t, HasErrors())
@@ -75,9 +75,20 @@ assert.False(t, HasErrors())
 The package provides comprehensive error handling assertions that work with Go's error wrapping mechanisms:
 
 ```go
-// Basic error comparison
+// Basic error comparison (now for checking the presence of an error)
 err := Process()
-assert.Error(t, err, ErrExpected)
+assert.Error(t, err, "Expected an error")
+
+// Check for the absence of an error
+result, err := GetData()
+assert.NoError(t, err, "Did not expect an error")
+
+
+// Assert that the actual error is equal to the expected error (string comparison)
+expectedErr := errors.New("file not found")
+actualErr := OpenFile("nonexistent.txt")
+assert.EqualError(t, actualErr, expectedErr)
+
 
 // Working with wrapped errors
 var ErrNotFound = errors.New("not found")
