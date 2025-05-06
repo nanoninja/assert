@@ -151,6 +151,35 @@ func TestEqualError(t *testing.T) {
 	}
 }
 
+func TestError(t *testing.T) {
+	tests := []struct {
+		name      string
+		actual    error
+		wantError bool
+	}{
+		{
+			name:      "non-nil error",
+			actual:    errors.New("test error"),
+			wantError: false,
+		},
+		{
+			name:      "nil error",
+			actual:    nil,
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		rec := NewTestRecorder(t)
+
+		Error(rec, tt.actual)
+
+		if tt.wantError != rec.HasError() {
+			t.Errorf("Error() error %v, want %v", rec.HasError(), tt.wantError)
+		}
+	}
+}
+
 // Custom error types.
 type testError struct {
 	code int
@@ -360,6 +389,35 @@ func TestNil(t *testing.T) {
 				t.Errorf("Nil() error = %v, want %v", rec.HasError(), tt.wantError)
 			}
 		})
+	}
+}
+
+func TestNoError(t *testing.T) {
+	tests := []struct {
+		name      string
+		actual    error
+		wantError bool
+	}{
+		{
+			name:      "nil error",
+			actual:    nil,
+			wantError: false,
+		},
+		{
+			name:      "non-nil error",
+			actual:    errors.New("test error"),
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		rec := NewTestRecorder(t)
+
+		NoError(rec, tt.actual)
+
+		if tt.wantError != rec.HasError() {
+			t.Errorf("NoError() error %v, want %v", rec.HasError(), tt.wantError)
+		}
 	}
 }
 
