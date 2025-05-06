@@ -33,6 +33,16 @@ func EqualError(t testing.TB, actual, expected error) {
 	}
 }
 
+// Error asserts that an error occurred (i.e., the error is not nil).
+// It fails the test if the error is nil, providing a clear error message.
+func Error(t testing.TB, err error, msg ...string) {
+	t.Helper()
+
+	if isNil(err) {
+		failCompare[any](t, "non-nil error", nil, append([]string{"expected an error"}, msg...)...)
+	}
+}
+
 // ErrorAs asserts that err can be converted to target type using errors.As.
 // The target must be a pointer to an error type.
 func ErrorAs(t testing.TB, err error, target any, msg ...string) {
@@ -71,6 +81,16 @@ func Nil(t testing.TB, value any) {
 
 	if !isNil(value) {
 		failCompare(t, value, nil)
+	}
+}
+
+// NoError asserts that no error occurred (i.e., the error is nil).
+// It fails the test if an error is not nil, providing a clear error message showing the unexpected error.
+func NoError(t testing.TB, err error, msg ...string) {
+	t.Helper()
+
+	if !isNil(err) {
+		failCompare[any](t, nil, err, append([]string{"unexpected error"}, msg...)...)
 	}
 }
 
