@@ -17,9 +17,9 @@ func Equals[T any](t testing.TB, actual, expected T, msg ...string) {
 	compare(t, expected, actual, msg...)
 }
 
-// Error checks if an error matches the expected error.
+// EqualError checks if an error matches the expected error.
 // It handles nil errors appropriately and provides clear error messages.
-func Error(t testing.TB, actual, expected error) {
+func EqualError(t testing.TB, actual, expected error) {
 	t.Helper()
 
 	if actual == nil && expected != nil {
