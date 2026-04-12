@@ -1,26 +1,25 @@
 # Assert
 
-A lightweight and type-safe assertion package for Go tests that prioritizes readability and clear error messages.
+A lightweight, type-safe assertion library for Go tests — familiar API, zero dependencies.
 
-[![Golang](https://img.shields.io/badge/Go-%3E%3D%201.18-%2300ADD8.svg)](https://go.dev/)
-[![Tests](https://github.com/nanoninja/assert/actions/workflows/tests.yml/badge.svg)](https://github.com/nanoninja/assert/actions)
+[![Golang](https://img.shields.io/badge/Go-%3E%3D%201.21-%2300ADD8.svg)](https://go.dev/)
+[![Tests](https://github.com/nanoninja/assert/actions/workflows/ci.yaml/badge.svg)](https://github.com/nanoninja/assert/actions)
 [![codecov](https://codecov.io/gh/nanoninja/assert/branch/main/graph/badge.svg)](https://codecov.io/gh/nanoninja/assert)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nanoninja/assert)](https://goreportcard.com/report/github.com/nanoninja/assert)
 [![Go Reference](https://pkg.go.dev/badge/github.com/nanoninja/assert.svg)](https://pkg.go.dev/github.com/nanoninja/assert)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-## Requirements
-
-- Go 1.18 or higher (required for generics support)
-
 ## Features
 
-- Type-safe assertions using Go generics
-- Clear and detailed error messages
-- Seamless integration with Go's testing package
+- Familiar API — same conventions as testify (`expected` first, `actual` second)
+- Type-safe using Go generics
+- Two packages: `assert` (continues on failure) and `require` (stops immediately)
 - No external dependencies
-- Support for custom error messages
-- File and line information for failed assertions
+- Clear, structured error messages
+
+## Requirements
+
+Go 1.21 or higher.
 
 ## Installation
 
@@ -28,121 +27,98 @@ A lightweight and type-safe assertion package for Go tests that prioritizes read
 go get github.com/nanoninja/assert
 ```
 
-## Basic Usage
+## assert vs require
+
+The library provides two packages with identical APIs but different failure behavior:
+
+| | `assert` | `require` |
+|---|---|---|
+| On failure | `t.Error` — test continues | `t.Fatal` — test stops immediately |
+| Use for | Validating multiple values at once | Preconditions that must pass |
 
 ```go
-func TestExample(t *testing.T) {
-    // Basic equality
-    assert.Equal(t, Calculate(2, 3), 5)
+import (
+    "github.com/nanoninja/assert"
+    "github.com/nanoninja/assert/require"
+)
 
-    // Error checking
-    err := Process()
-    assert.EqualError(t, err, ErrExpected)
+func TestCreateUser(t *testing.T) {
+    user, err := CreateUser("alice")
 
-    // Collection operations
-    users := []string{"alice", "bob"}
+    require.NoError(t, err)    // stops if err != nil — user would be nil
+    require.NotNil(t, user)    // stops if nil — next assertions would panic
 
-    assert.Contains(t, users, "alice")
-    assert.Len(t, users, 2)
-
-    // Numeric comparisons
-    assert.Greater(t, GetCount(), 0)
-    assert.Between(t, GetValue(), 1, 10)
-
-    // Boolean assertions
-    assert.True(t, IsValid())
-    assert.False(t, HasErrors())
-
-    // Nil checks
-    assert.NotNil(t, GetUser())
+    assert.Equal(t, "alice", user.Name)    // continues on failure
+    assert.Equal(t, "active", user.Status) // sees all failures in one run
+    assert.NotEmpty(t, user.ID)
 }
 ```
 
-## Available Assertions
+## Usage
 
-### Basic Comparisons
+### Comparisons
 
 ```go
-assert.Equal(t, Calculate(2, 3), 5)
-assert.NotEqual(t, user1, user2)
+assert.Equal(t, expected, actual)
+assert.NotEqual(t, expected, actual)
 
 assert.True(t, IsValid())
 assert.False(t, HasErrors())
+
+assert.Nil(t, err)
+assert.NotNil(t, user)
+
+assert.IsType(t, MyStruct{}, value)
+assert.Implements(t, (*io.Reader)(nil), myReader)
 ```
 
 ### Error Handling
 
-The package provides comprehensive error handling assertions that work with Go's error wrapping mechanisms:
-
 ```go
-// Basic error comparison (now for checking the presence of an error)
-err := Process()
-assert.Error(t, err, "Expected an error")
+result, err := Process()
+assert.NoError(t, err)
+assert.Error(t, err)
 
-// Check for the absence of an error
-result, err := GetData()
-assert.NoError(t, err, "Did not expect an error")
+assert.EqualError(t, err, "file not found")
 
-
-// Assert that the actual error is equal to the expected error (string comparison)
-expectedErr := errors.New("file not found")
-actualErr := OpenFile("nonexistent.txt")
-assert.EqualError(t, actualErr, expectedErr)
-
-
-// Working with wrapped errors
 var ErrNotFound = errors.New("not found")
-wrappedErr := fmt.Errorf("failed to fetch: %w", ErrNotFound)
-
+wrappedErr := fmt.Errorf("fetch failed: %w", ErrNotFound)
 assert.ErrorIs(t, wrappedErr, ErrNotFound)
 
-// Working with custom error types
-type ValidationError struct {
-    Field string
-    Code  int
-}
-
-func (e *ValidationError) Error() string {
-    return fmt.Sprintf("validation failed: %s (code: %d)", e.Field, e.Code)
-}
-
-// Later in tests...
-err := Validate()
 var validationErr *ValidationError
-
 assert.ErrorAs(t, err, &validationErr)
+
+assert.Panics(t, fn, "expected panic message")
+assert.NotPanics(t, fn)
+assert.PanicsWithError(t, fn, "expected error message")
 ```
 
-Different error assertion functions serve different purposes:
-
-* `Error()`: Direct comparison of error values
-* `ErrorIs()`: Checks if an error matches a specific error value anywhere in its chain of wrapped errors
-* `ErrorAs()`: Checks if an error (or any error it wraps) matches a specific error type and extracts it
-
-### Collection Operations
+### Collections
 
 ```go
 users := []string{"alice", "bob", "charlie"}
 
 assert.Contains(t, users, "alice")
 assert.NotContains(t, users, "dave")
+assert.ElementsMatch(t, []int{1, 2, 3}, []int{3, 1, 2})
+
+assert.Subset(t, users, []string{"alice", "bob"})
+assert.NotSubset(t, users, []string{"alice", "dave"})
 
 assert.Empty(t, list)
+assert.NotEmpty(t, users)
 assert.Len(t, users, 3)
 
 userMap := map[string]User{"alice": aliceUser}
-
 assert.HasKey(t, userMap, "alice")
 ```
 
-### String Operations
+### Strings
 
 ```go
 assert.StringContains(t, response.Body, "success")
-
 assert.HasPrefix(t, filename, "test-")
-assert.HasSuffix(t, filename, ".txt")
-
+assert.HasSuffix(t, filename, ".go")
 assert.MatchRegexp(t, email, `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 ```
 
@@ -151,42 +127,40 @@ assert.MatchRegexp(t, email, `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 ```go
 assert.Greater(t, count, 0)
 assert.GreaterOrEqual(t, age, 18)
-
-assert.LessOrEqual(t, temperature, 100)
+assert.Less(t, temperature, 100)
+assert.LessOrEqual(t, price, maxPrice)
 assert.Between(t, value, min, max)
+
+assert.Positive(t, score)
+assert.Negative(t, balance)
+
+assert.InDelta(t, 0.3, 0.1+0.2, 0.0001) // float tolerance
+```
+
+### JSON
+
+```go
+// Compares JSON semantically — key order and whitespace are ignored
+assert.JSONEqual(t, `{"a":1,"b":2}`, `{"b":2,"a":1}`)
+```
+
+### Time
+
+```go
+assert.WithinDuration(t, expected, actual, time.Second)
 ```
 
 ## Error Messages
 
-When an assertion fails, you get clear error messages that include:
+Failed assertions produce structured output showing file, line, expected and actual values:
 
-* File and line number where the failure occurred
-* Expected and actual values with their types
-* Optional custom message
-* Any relevant context for the comparison
-
-Example of an error message:
-
-```bash
-file.go:42
+```
+file_test.go:42
+ Message: optional custom message
 Expected: (int) 5
   Actual: (int) 4
 ```
 
 ## License
 
-This project is licensed under the BSD 3-Clause License.
-
-It allows you to:
-- Use the software commercially
-- Modify the software
-- Distribute the software
-- Place warranty on the software
-- Use the software privately
-
-The only requirements are:
-- Include the copyright notice
-- Include the license text
-- Not use the author's name to promote derived products without permission
-
-For more details, see the LICENSE file in the project repository.
+BSD 3-Clause. See [LICENSE](LICENSE).

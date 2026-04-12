@@ -1,67 +1,98 @@
-// Package assert provides a simple yet powerful testing helper library for Go.
-// It offers a set of assertion functions that make tests more readable and
-// maintainable while providing clear error messages when tests fail.
+// Copyright 2025 The Nanoninja Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// Package assert provides a lightweight, type-safe assertion library for Go tests.
+// It follows the same conventions as testify while remaining simple and dependency-free.
 //
-// The package follows Go's testing conventions and works seamlessly with the
-// standard testing package. It uses generics to provide type safety while
-// maintaining a clean and intuitive API.
-//
-// Basic Usage:
+// # Basic Usage
 //
 //	func TestExample(t *testing.T) {
-//	    result := Calculate(2, 3)
-//	    assert.Equal(t, result, 5)
+//	    result, err := Compute(2, 3)
+//	    assert.NoError(t, err)
+//	    assert.Equal(t, 5, result)
 //
-//	    user := GetUser()
-//	    assert.NotNil(t, user)
-//	    assert.True(t, user.IsActive())
+//	    users := GetUsers()
+//	    assert.NotEmpty(t, users)
+//	    assert.Len(t, users, 3)
 //	}
 //
-// The package includes several categories of assertions:
+// # Parameter Convention
 //
-// Basic Comparisons:
-//   - Equal/NotEqual: Compare values of any type
-//   - True/False: Boolean assertions
-//   - Nil/NotNil: Check for nil values
+// All assertion functions follow the testify convention: expected value first, actual value second.
 //
-// Error Handling:
-//   - Error: Assert that an error occurred (i.e., the error is not nil).
-//   - NoError: Assert that no error occurred (i.e., the error is nil).
-//   - EqualError: Assert that the error returned (if any) is equal to the expected error (compares error messages).
-//   - ErrorIs: Check if an error matches a specific error value anywhere in its chain of wrapped errors.
-//   - ErrorAs: Check if an error (or any error it wraps) matches a specific error type and extracts it.
-//   - Panics: Test for panic conditions.
+//	assert.Equal(t, expected, actual)
 //
-// Collection Operations:
-//   - Contains/NotContains: Check if a slice contains (or not) an element
-//   - Empty: Verify if a collection is empty
-//   - Len: Check collection length
-//   - HasKey: Verify map key existence
+// # Comparisons
 //
-// String Operations:
-//   - StringContains: Check string containment
-//   - HasPrefix: Verify if a string starts with a prefix
-//   - HasSuffix: Verify if a string ends with a suffix
-//   - MatchRegexp: Check if a string matches a regular expression pattern
+//   - [Equal] / [NotEqual]: compare values of any type using reflect.DeepEqual
+//   - [True] / [False]: boolean assertions
+//   - [Nil] / [NotNil]: nil checks for any type (pointers, slices, maps, channels...)
+//   - [IsType]: assert that two values share the same type
+//   - [Implements]: assert that a value implements an interface
 //
-// Numeric Comparisons:
-//   - Greater: Compare if a value is strictly greater
-//   - GreaterOrEqual: Compare if a value is greater or equal
-//   - LessOrEqual: Compare if a value is less or equal
-//   - Between: Check if a value falls within a range
+// # Error Handling
 //
-// Each assertion function provides clear error messages that include:
-//   - The file and line number where the assertion failed
-//   - The expected and actual values
-//   - The types of the compared values
-//   - An optional custom message
+//   - [Error] / [NoError]: assert presence or absence of an error
+//   - [EqualError]: assert an error's message matches an expected string
+//   - [ErrorIs]: check error chain with errors.Is
+//   - [ErrorAs]: check error chain with errors.As
+//   - [Panics] / [NotPanics]: assert panic behavior
+//   - [PanicsWithError]: assert a function panics with a specific error message
 //
-// The error messages are designed to be clear and helpful for debugging:
+// # Collections
+//
+//   - [Contains] / [NotContains]: check slice membership
+//   - [ElementsMatch]: same elements regardless of order
+//   - [Subset] / [NotSubset]: subset relationship between slices
+//   - [Empty] / [NotEmpty]: check if a collection is empty
+//   - [Len]: check collection length
+//   - [HasKey]: check map key existence
+//
+// # Strings
+//
+//   - [StringContains]: check substring
+//   - [HasPrefix] / [HasSuffix]: check string prefix or suffix
+//   - [MatchRegexp]: check against a regular expression
+//
+// # Numeric Comparisons
+//
+//   - [Greater] / [Less]: strict comparison
+//   - [GreaterOrEqual] / [LessOrEqual]: non-strict comparison
+//   - [Between]: check inclusive range
+//   - [Positive] / [Negative]: sign assertions
+//   - [InDelta]: floating-point comparison with tolerance
+//
+// # JSON
+//
+//   - [JSONEqual]: semantic JSON comparison (ignores key order and whitespace)
+//
+// # Time
+//
+//   - [WithinDuration]: assert two time values are close within a given duration
+//
+// # Require Package
+//
+// The [require] sub-package mirrors the assert API but stops the test immediately
+// on failure using t.FailNow(). Use it for preconditions.
+//
+//	import "github.com/nanoninja/assert/require"
+//
+//	func TestExample(t *testing.T) {
+//	    result, err := GetUser(42)
+//	    require.NoError(t, err)      // stops if err != nil
+//	    require.NotNil(t, result)    // stops if nil
+//
+//	    assert.Equal(t, "alice", result.Name)   // continues on failure
+//	    assert.True(t, result.Active)           // sees all failures
+//	}
+//
+// # Error Messages
+//
+// All failed assertions produce structured output:
 //
 //	file.go:42
-//	Message: custom error message
+//	 Message: optional custom message
 //	Expected: (int) 5
 //	  Actual: (int) 4
-//
-// For more information and examples, see the README.md file.
 package assert
