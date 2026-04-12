@@ -126,6 +126,45 @@ func Panics(t testing.TB, fn func(), expectedMsg string) {
 	fn()
 }
 
+// NotPanics verifies that a function does not panic.
+func NotPanics(t testing.TB, fn func(), msg ...string) {
+	t.Helper()
+
+	defer func() {
+		if r := recover(); r != nil {
+			failCompare[any](t,
+				"no panic",
+				fmt.Sprint(r),
+				append([]string{"unexpected panic"}, msg...)...,
+			)
+		}
+	}()
+
+	fn()
+}
+
+// PanicsWithError verifies that a function panics with an error matching the expected message.
+func PanicsWithError(t testing.TB, fn func(), expectedMsg string) {
+	t.Helper()
+
+	defer func() {
+		if r := recover(); r != nil {
+			err, ok := r.(error)
+			if !ok {
+				failCompare[any](t, expectedMsg, fmt.Sprint(r), "panic value is not an error")
+				return
+			}
+			if err.Error() != expectedMsg {
+				failCompare(t, expectedMsg, err.Error(), "unexpected panic error message")
+			}
+		} else {
+			t.Errorf("\nExpected panic: %v\n  Actual: no panic", expectedMsg)
+		}
+	}()
+
+	fn()
+}
+
 // True asserts that a boolean value is true.
 func True(t testing.TB, value bool, msg ...string) {
 	t.Helper()

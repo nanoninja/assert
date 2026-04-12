@@ -128,6 +128,62 @@ func TestEmpty(t *testing.T) {
 	}
 }
 
+func TestNotEmpty(t *testing.T) {
+	tests := []struct {
+		name       string
+		collection any
+		wantError  bool
+	}{
+		{
+			name:       "non-empty slice",
+			collection: []int{1, 2, 3},
+			wantError:  false,
+		},
+		{
+			name:       "non-empty map",
+			collection: map[string]int{"a": 1},
+			wantError:  false,
+		},
+		{
+			name:       "non-empty string",
+			collection: "hello",
+			wantError:  false,
+		},
+		{
+			name:       "empty slice",
+			collection: []int{},
+			wantError:  true,
+		},
+		{
+			name:       "empty map",
+			collection: map[string]int{},
+			wantError:  true,
+		},
+		{
+			name:       "empty string",
+			collection: "",
+			wantError:  true,
+		},
+		{
+			name:       "invalid type",
+			collection: 42,
+			wantError:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			NotEmpty(rec, tt.collection)
+
+			if tt.wantError != rec.HasError() {
+				rec.Errorf("NotEmpty() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
 func TestHasKey(t *testing.T) {
 	tests := []struct {
 		name      string

@@ -5,6 +5,7 @@ package assert
 
 import (
 	"fmt"
+	"math"
 	"testing"
 )
 
@@ -45,6 +46,15 @@ func Greater[T Ordered](t testing.TB, e1, e2 T, msg ...string) {
 	}
 }
 
+func Less[T Ordered](t testing.TB, e1, e2 T, msg ...string) {
+	t.Helper()
+
+	if e1 >= e2 {
+		failCompare[any](t, fmt.Sprintf("< %v", e2), e1, append(
+			[]string{"value not less than maximum"}, msg...)...)
+	}
+}
+
 // GreaterOrEqual checks if a value is greater than or equal to a minimum.
 // Particularly useful for validating minimum requirements or thresholds.
 func GreaterOrEqual[T Ordered](t testing.TB, actual, min T, msg ...string) {
@@ -62,5 +72,39 @@ func LessOrEqual[T Ordered](t testing.TB, actual, max T, msg ...string) {
 
 	if actual > max {
 		failCompare[any](t, fmt.Sprintf("<= %v", max), actual, msg...)
+	}
+}
+
+// Positive checks if a number is strictly greater than zero
+func Positive[T Number](t testing.TB, value T, msg ...string) {
+	t.Helper()
+
+	if value <= 0 {
+		failCompare[any](t, "> 0", value, append([]string{"value is not positive"}, msg...)...)
+	}
+}
+
+// Negative checks if a number is strictly less than zero.
+func Negative[T Number](t testing.TB, value T, msg ...string) {
+	t.Helper()
+
+	if value >= 0 {
+		failCompare[any](t, "< 0", value, append([]string{"value is not negative"}, msg...)...)
+	}
+}
+
+// InDelta checks if two numbers are close enough within a given delta.
+// Useful for floating-point comparisons where exact equality is unreliable.
+func InDelta[T Number](t testing.TB, expected, actual T, delta float64, msg ...string) {
+	t.Helper()
+
+	diff := math.Abs(float64(expected) - float64(actual))
+	if diff > delta {
+		failCompare[any](t,
+			fmt.Sprintf("%v (±%v)", expected, delta),
+			actual,
+			append(
+				[]string{fmt.Sprintf("values differ by %v, exceeds delta %v", diff, delta)},
+				msg...)...)
 	}
 }

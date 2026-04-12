@@ -47,6 +47,26 @@ func Empty(t testing.TB, collection any, msg ...string) {
 	}
 }
 
+// NotEmpty checks if a collection (slice, map, string, or array) is not empty
+func NotEmpty(t testing.TB, collection any, msg ...string) {
+	t.Helper()
+
+	v := reflect.ValueOf(collection)
+
+	switch v.Kind() {
+	case reflect.Slice, reflect.Array, reflect.Map, reflect.String:
+		if v.Len() == 0 {
+			failCompare(t,
+				"non-empty collection",
+				"empty collection",
+				msg...,
+			)
+		}
+	default:
+		t.Errorf("\nNotEmpty() called with unsupported type: (%T)", collection)
+	}
+}
+
 // HasKey checks if a map contains a specific key.
 func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) {
 	t.Helper()

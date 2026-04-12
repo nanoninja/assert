@@ -563,6 +563,98 @@ func TestPanics(t *testing.T) {
 	}
 }
 
+func TestNotPanics(t *testing.T) {
+	tests := []struct {
+		name      string
+		fn        func()
+		wantError bool
+	}{
+		{
+			name:      "no panic",
+			fn:        func() {},
+			wantError: false,
+		},
+		{
+			name: "unexpected panic with string",
+			fn: func() {
+				panic("something went wrong")
+			},
+			wantError: true,
+		},
+		{
+			name: "unexpected panic with error",
+			fn: func() {
+				panic(errors.New("panic error"))
+			},
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			NotPanics(rec, tt.fn)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("NotPanics() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
+func TestPanicsWithError(t *testing.T) {
+	tests := []struct {
+		name      string
+		fn        func()
+		expectMsg string
+		wantError bool
+	}{
+		{
+			name: "matching error message",
+			fn: func() {
+				panic(errors.New("expected error"))
+			},
+			expectMsg: "expected error",
+			wantError: false,
+		},
+		{
+			name: "different error message",
+			fn: func() {
+				panic(errors.New("actual error"))
+			},
+			expectMsg: "expected error",
+			wantError: true,
+		},
+		{
+			name: "panic with non-error value",
+			fn: func() {
+				panic("not an error")
+			},
+			expectMsg: "expected error",
+			wantError: true,
+		},
+		{
+			name:      "no panic when expected",
+			fn:        func() {},
+			expectMsg: "expected error",
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			PanicsWithError(rec, tt.fn, tt.expectMsg)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("PanicsWithError() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
 func TestTrue(t *testing.T) {
 	tests := []struct {
 		name      string

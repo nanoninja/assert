@@ -106,6 +106,46 @@ func TestGreater(t *testing.T) {
 	})
 }
 
+func TestLess(t *testing.T) {
+	t.Run("numeric comparaison", func(t *testing.T) {
+		tests := []struct {
+			name      string
+			e1        int
+			e2        int
+			wantError bool
+		}{
+			{
+				name:      "less than maximum",
+				e1:        3,
+				e2:        5,
+				wantError: false,
+			},
+			{
+				name:      "equal to maximum",
+				e1:        5,
+				e2:        5,
+				wantError: true,
+			},
+			{
+				name:      "greater than maximum",
+				e1:        10,
+				e2:        5,
+				wantError: true,
+			},
+		}
+
+		for _, tt := range tests {
+			rec := NewTestRecorder(t)
+
+			Less(rec, tt.e1, tt.e2)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("Less() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		}
+	})
+}
+
 func TestGreaterOrEqual(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -198,4 +238,221 @@ func TestLessOrEqual(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestPositive(t *testing.T) {
+	tests := []struct {
+		name      string
+		value     int
+		wantError bool
+	}{
+		{
+			name:      "positive integer",
+			value:     5,
+			wantError: false,
+		},
+		{
+			name:      "zero",
+			value:     0,
+			wantError: true,
+		},
+		{
+			name:      "negative integer",
+			value:     -3,
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			Positive(rec, tt.value)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("Positive() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
+func TestPositive_Float(t *testing.T) {
+	floatTests := []struct {
+		name      string
+		value     float64
+		wantError bool
+	}{
+		{name: "positive float", value: 3.14, wantError: false},
+		{name: "zero float", value: 0.0, wantError: true},
+		{name: "negative float", value: -1.5, wantError: true},
+	}
+
+	for _, tt := range floatTests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			Positive(rec, tt.value)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("Positive() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
+func TestNegative(t *testing.T) {
+	tests := []struct {
+		name      string
+		value     int
+		wantError bool
+	}{
+		{
+			name:      "negative integer",
+			value:     -5,
+			wantError: false,
+		},
+		{
+			name:      "zero",
+			value:     0,
+			wantError: true,
+		},
+		{
+			name:      "positive integer",
+			value:     3,
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			Negative(rec, tt.value)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("Negative() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
+func TestNegative_Float(t *testing.T) {
+	tests := []struct {
+		name      string
+		value     float64
+		wantError bool
+	}{
+		{name: "negative float", value: -3.14, wantError: false},
+		{name: "zero float", value: 0.0, wantError: true},
+		{name: "positive float", value: 1.5, wantError: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			Negative(rec, tt.value)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("Negative() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
+func TestInDelta(t *testing.T) {
+	t.Run("float64 values", func(t *testing.T) {
+		tests := []struct {
+			name      string
+			expected  float64
+			actual    float64
+			delta     float64
+			wantError bool
+		}{
+			{
+				name:      "within delta",
+				expected:  0.3,
+				actual:    0.1 + 0.2,
+				delta:     0.0001,
+				wantError: false,
+			},
+			{
+				name:      "exactly equal",
+				expected:  1.5,
+				actual:    1.5,
+				delta:     0.0,
+				wantError: false,
+			},
+			{
+				name:      "exceeds delta",
+				expected:  1.0,
+				actual:    1.5,
+				delta:     0.1,
+				wantError: true,
+			},
+			{
+				name:      "negative values within delta",
+				expected:  -1.0,
+				actual:    -1.0001,
+				delta:     0.001,
+				wantError: false,
+			},
+			{
+				name:      "negative values exceeds delta",
+				expected:  -1.0,
+				actual:    -2.0,
+				delta:     0.5,
+				wantError: true,
+			},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				rec := NewTestRecorder(t)
+
+				InDelta(rec, tt.expected, tt.actual, tt.delta)
+
+				if tt.wantError != rec.HasError() {
+					t.Errorf("InDelta() error = %v, want %v", rec.HasError(), tt.wantError)
+				}
+			})
+		}
+	})
+
+	t.Run("integer values", func(t *testing.T) {
+		tests := []struct {
+			name      string
+			expected  int
+			actual    int
+			delta     float64
+			wantError bool
+		}{
+			{
+				name:      "within delta",
+				expected:  10,
+				actual:    11,
+				delta:     1.0,
+				wantError: false,
+			},
+			{
+				name:      "exceeds delta",
+				expected:  10,
+				actual:    15,
+				delta:     1.0,
+				wantError: true,
+			},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				rec := NewTestRecorder(t)
+
+				InDelta(rec, tt.expected, tt.actual, tt.delta)
+
+				if tt.wantError != rec.HasError() {
+					t.Errorf("InDelta() error = %v, want %v", rec.HasError(), tt.wantError)
+				}
+			})
+		}
+	})
 }
