@@ -111,6 +111,7 @@ assert.Len(t, users, 3)
 
 userMap := map[string]User{"alice": aliceUser}
 assert.HasKey(t, userMap, "alice")
+assert.NotHasKey(t, userMap, "bob")
 ```
 
 ### Strings
@@ -140,8 +141,18 @@ assert.InDelta(t, 0.3, 0.1+0.2, 0.0001) // float tolerance
 ### JSON
 
 ```go
-// Compares JSON semantically — key order and whitespace are ignored
+// Compares two JSON strings semantically — key order and whitespace are ignored
 assert.JSONEqual(t, `{"a":1,"b":2}`, `{"b":2,"a":1}`)
+
+// Marshals a Go value and compares it to a JSON string
+assert.EqualJSON(t, myStruct, `{"name":"alice"}`)
+```
+
+### Files
+
+```go
+assert.FileExists(t, "/path/to/file.txt")
+assert.DirExists(t, "/path/to/dir")
 ```
 
 ### Time

@@ -153,6 +153,10 @@ func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) 
 	assert.HasKey(wrap(t), m, key, msg...)
 }
 
+func NotHasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) {
+	assert.NotHasKey(wrap(t), m, key, msg...)
+}
+
 // -- Strings --
 
 func StringContains(t testing.TB, s, substr string, msg ...string) {
@@ -207,8 +211,22 @@ func InDelta[T assert.Number](t testing.TB, expected, actual T, delta float64, m
 
 // -- JSON --
 
+func EqualJSON(t testing.TB, expected any, actualJSON string, msg ...string) {
+	assert.EqualJSON(wrap(t), expected, actualJSON, msg...)
+}
+
 func JSONEqual(t testing.TB, expected, actual string, msg ...string) {
 	assert.JSONEqual(wrap(t), expected, actual, msg...)
+}
+
+// -- Files --
+
+func FileExists(t testing.TB, path string, msg ...string) {
+	assert.FileExists(wrap(t), path, msg...)
+}
+
+func DirExists(t testing.TB, path string, msg ...string) {
+	assert.DirExists(wrap(t), path, msg...)
 }
 
 // -- Time --

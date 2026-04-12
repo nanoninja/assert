@@ -76,6 +76,17 @@ func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) 
 	}
 }
 
+// NotHasKey checks that a map does NOT contain a specific key.
+func NotHasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) {
+	t.Helper()
+
+	if _, ok := m[key]; ok {
+		failCompare[any](t, fmt.Sprintf("map without key %v", key), m, append(
+			[]string{"map contains unexpected key"},
+			msg...)...)
+	}
+}
+
 // Len checks if a collection (slice, array, map, or string) has the expected length.
 func Len(t testing.TB, collection any, expected int, msg ...string) {
 	t.Helper()

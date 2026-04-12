@@ -5,6 +5,58 @@ package assert
 
 import "testing"
 
+func TestEqualJSON(t *testing.T) {
+	tests := []struct {
+		name      string
+		expected  any
+		actual    string
+		wantError bool
+	}{
+		{
+			name:      "struct matches JSON",
+			expected:  struct{ Name string }{Name: "alice"},
+			actual:    `{"Name":"alice"}`,
+			wantError: false,
+		},
+		{
+			name:      "map matches JSON",
+			expected:  map[string]int{"a": 1, "b": 2},
+			actual:    `{"b":2,"a":1}`,
+			wantError: false,
+		},
+		{
+			name:      "value mismatch",
+			expected:  map[string]int{"a": 1},
+			actual:    `{"a":2}`,
+			wantError: true,
+		},
+		{
+			name:      "invalid actual JSON",
+			expected:  map[string]int{"a": 1},
+			actual:    `{invalid}`,
+			wantError: true,
+		},
+		{
+			name:      "unmarshalable expected value",
+			expected:  make(chan int),
+			actual:    `{}`,
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			EqualJSON(rec, tt.expected, tt.actual)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("EqualJSON() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
 func TestJSONEqual(t *testing.T) {
 	tests := []struct {
 		name      string

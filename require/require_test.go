@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -309,6 +310,16 @@ func TestLen(t *testing.T) {
 	assertContinued(t, rec, "Len")
 }
 
+func TestNotHasKey(t *testing.T) {
+	rec := newRecorder(t)
+	require.NotHasKey(rec, map[string]int{"a": 1}, "a")
+	assertStopped(t, rec, "NotHasKey")
+
+	rec = newRecorder(t)
+	require.NotHasKey(rec, map[string]int{"a": 1}, "b")
+	assertContinued(t, rec, "NotHasKey")
+}
+
 func TestHasKey(t *testing.T) {
 	rec := newRecorder(t)
 	require.HasKey(rec, map[string]int{"a": 1}, "b")
@@ -445,6 +456,16 @@ func TestInDelta(t *testing.T) {
 
 // -- JSON --
 
+func TestEqualJSON(t *testing.T) {
+	rec := newRecorder(t)
+	require.EqualJSON(rec, map[string]int{"a": 1}, `{"a":2}`)
+	assertStopped(t, rec, "EqualJSON")
+
+	rec = newRecorder(t)
+	require.EqualJSON(rec, map[string]int{"a": 1}, `{"a":1}`)
+	assertContinued(t, rec, "EqualJSON")
+}
+
 func TestJSONEqual(t *testing.T) {
 	rec := newRecorder(t)
 	require.JSONEqual(rec, `{"a":1}`, `{"a":2}`)
@@ -453,6 +474,36 @@ func TestJSONEqual(t *testing.T) {
 	rec = newRecorder(t)
 	require.JSONEqual(rec, `{"a":1,"b":2}`, `{"b":2,"a":1}`)
 	assertContinued(t, rec, "JSONEqual")
+}
+
+// -- Files --
+
+func TestFileExists(t *testing.T) {
+	f, err := os.CreateTemp(t.TempDir(), "testfile-*.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.Close()
+
+	rec := newRecorder(t)
+	require.FileExists(rec, f.Name()+".nonexistent")
+	assertStopped(t, rec, "FileExists")
+
+	rec = newRecorder(t)
+	require.FileExists(rec, f.Name())
+	assertContinued(t, rec, "FileExists")
+}
+
+func TestDirExists(t *testing.T) {
+	dir := t.TempDir()
+
+	rec := newRecorder(t)
+	require.DirExists(rec, dir+"/nonexistent")
+	assertStopped(t, rec, "DirExists")
+
+	rec = newRecorder(t)
+	require.DirExists(rec, dir)
+	assertContinued(t, rec, "DirExists")
 }
 
 // -- Time --

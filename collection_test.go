@@ -420,6 +420,46 @@ func TestNotSubset(t *testing.T) {
 	}
 }
 
+func TestNotHasKey(t *testing.T) {
+	tests := []struct {
+		name      string
+		m         map[string]int
+		key       string
+		wantError bool
+	}{
+		{
+			name:      "key absent",
+			m:         map[string]int{"a": 1, "b": 2},
+			key:       "c",
+			wantError: false,
+		},
+		{
+			name:      "key present",
+			m:         map[string]int{"a": 1, "b": 2},
+			key:       "a",
+			wantError: true,
+		},
+		{
+			name:      "empty map",
+			m:         map[string]int{},
+			key:       "a",
+			wantError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			NotHasKey(rec, tt.m, tt.key)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("NotHasKey() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
 func TestNotContains(t *testing.T) {
 	tests := []struct {
 		name      string

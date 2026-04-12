@@ -47,7 +47,7 @@
 //   - [Subset] / [NotSubset]: subset relationship between slices
 //   - [Empty] / [NotEmpty]: check if a collection is empty
 //   - [Len]: check collection length
-//   - [HasKey]: check map key existence
+//   - [HasKey] / [NotHasKey]: check map key existence or absence
 //
 // # Strings
 //
@@ -66,6 +66,12 @@
 // # JSON
 //
 //   - [JSONEqual]: semantic JSON comparison (ignores key order and whitespace)
+//   - [EqualJSON]: marshal a Go value and compare it to a JSON string
+//
+// # Files
+//
+//   - [FileExists]: assert a file exists at a path
+//   - [DirExists]: assert a directory exists at a path
 //
 // # Time
 //
