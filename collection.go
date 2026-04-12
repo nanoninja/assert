@@ -13,7 +13,7 @@ import (
 
 // Contains checks if a slice contains a specific element.
 // The comparison is done using reflection.DeepEqual.
-func Contains[T any](t testing.TB, slice []T, element T) {
+func Contains[T any](t testing.TB, slice []T, element T, msg ...string) {
 	t.Helper()
 
 	for _, v := range slice {
@@ -22,7 +22,9 @@ func Contains[T any](t testing.TB, slice []T, element T) {
 		}
 	}
 
-	failCompare[any](t, element, slice, "slice does not contain expected element")
+	failCompare[any](t, element, slice, append(
+		[]string{"slice does not contain expected element"},
+		msg...)...)
 }
 
 // Empty checks if a collection (slice, map, string, or array) is empty.
@@ -46,11 +48,13 @@ func Empty(t testing.TB, collection any, msg ...string) {
 }
 
 // HasKey checks if a map contains a specific key.
-func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K) {
+func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) {
 	t.Helper()
 
 	if _, ok := m[key]; !ok {
-		failCompare[any](t, key, m, "map does not contain expected key")
+		failCompare[any](t, key, m, append(
+			[]string{"map does not contain expected key"},
+			msg...)...)
 	}
 }
 
@@ -75,7 +79,7 @@ func HasSuffix(t testing.TB, s, suffix string, msg ...string) {
 }
 
 // Len checks if a collection (slice, array, map, or string) has the expected length.
-func Len(t testing.TB, collection any, expected int) {
+func Len(t testing.TB, collection any, expected int, msg ...string) {
 	t.Helper()
 
 	v := reflect.ValueOf(collection)
@@ -85,7 +89,7 @@ func Len(t testing.TB, collection any, expected int) {
 		reflect.Map,
 		reflect.String:
 		if v.Len() != expected {
-			failCompare(t, expected, v.Len(), "unexpected length")
+			failCompare(t, expected, v.Len(), append([]string{"unexpected length"}, msg...)...)
 		}
 	default:
 		t.Errorf("\nLen called with unsupported type: %T", collection)
@@ -123,10 +127,12 @@ func NotContains[T any](t testing.TB, slice []T, element T, msg ...string) {
 }
 
 // StringContains checks if a string contains an expected substring.
-func StringContains(t testing.TB, s, substr string) {
+func StringContains(t testing.TB, s, substr string, msg ...string) {
 	t.Helper()
 
 	if !strings.Contains(s, substr) {
-		failCompare(t, substr, s, "string does not contain expected substring")
+		failCompare(t, substr, s, append(
+			[]string{"string does not contain expected substring"},
+			msg...)...)
 	}
 }

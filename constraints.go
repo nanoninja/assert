@@ -23,24 +23,25 @@ type Ordered interface {
 
 // Between checks if a value falls within an inclusive range.
 // It works with any type that can be ordered (numbers and strings).
-func Between[T Ordered](t testing.TB, actual, min, max T) {
+func Between[T Ordered](t testing.TB, actual, min, max T, msg ...string) {
 	t.Helper()
 
 	if actual < min || actual > max {
 		failCompare[any](t,
-			fmt.Sprintf("Between %v and %v", min, max),
+			fmt.Sprintf("between %v and %v", min, max),
 			actual,
-			"value not within expected range",
+			append([]string{"value not within expected range"}, msg...)...,
 		)
 	}
 }
 
 // Greater checks if a value is greater than a minimum value.
-func Greater[T Ordered](t testing.TB, actual, min T) {
+func Greater[T Ordered](t testing.TB, e1, e2 T, msg ...string) {
 	t.Helper()
 
-	if actual <= min {
-		failCompare[any](t, fmt.Sprintf("> %v", min), actual, "value not greater than minimum")
+	if e1 <= e2 {
+		failCompare[any](t, fmt.Sprintf("> %v", e2), e1, append(
+			[]string{"value not greater than minimum"}, msg...)...)
 	}
 }
 
@@ -50,7 +51,7 @@ func GreaterOrEqual[T Ordered](t testing.TB, actual, min T, msg ...string) {
 	t.Helper()
 
 	if actual < min {
-		failCompare[any](t, actual, fmt.Sprintf(">= %v", min), msg...)
+		failCompare[any](t, fmt.Sprintf(">= %v", min), actual, msg...)
 	}
 }
 
@@ -60,6 +61,6 @@ func LessOrEqual[T Ordered](t testing.TB, actual, max T, msg ...string) {
 	t.Helper()
 
 	if actual > max {
-		failCompare[any](t, actual, fmt.Sprintf("<= %v", max), msg...)
+		failCompare[any](t, fmt.Sprintf("<= %v", max), actual, msg...)
 	}
 }
