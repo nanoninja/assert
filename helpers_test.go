@@ -55,14 +55,14 @@ func TestFailCompare(t *testing.T) {
 		name      string
 		expected  any
 		actual    any
-		msg       []string
+		msg       []any
 		wantParts []string
 	}{
 		{
 			name:     "basic types with message",
 			expected: 42,
 			actual:   43,
-			msg:      []string{"test message"},
+			msg:      []any{"test message"},
 			wantParts: []string{
 				"Message: test message",
 				"Expected: (int) 42",
@@ -83,11 +83,29 @@ func TestFailCompare(t *testing.T) {
 			name:     "complex types",
 			expected: []int{1, 2},
 			actual:   []int{3, 4},
-			msg:      []string{"slice comparison"},
+			msg:      []any{"slice comparison"},
 			wantParts: []string{
 				"Message: slice comparison",
 				"Expected: ([]int) []int{1, 2}",
 				"Actual: ([]int) []int{3, 4}",
+			},
+		},
+		{
+			name:     "format message with args",
+			expected: 1,
+			actual:   2,
+			msg:      []any{"got %d expected %d", 2, 1},
+			wantParts: []string{
+				"Message: got 2 expected 1",
+			},
+		},
+		{
+			name:     "non-string first arg",
+			expected: 1,
+			actual:   2,
+			msg:      []any{42},
+			wantParts: []string{
+				"Message: 42",
 			},
 		},
 	}

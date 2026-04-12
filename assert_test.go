@@ -14,7 +14,7 @@ func TestEqual(t *testing.T) {
 		name      string
 		actual    any
 		expected  any
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -231,7 +231,7 @@ func TestErrorIs(t *testing.T) {
 		name      string
 		err       error
 		target    error
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -277,7 +277,7 @@ func TestFalse(t *testing.T) {
 	tests := []struct {
 		name      string
 		value     bool
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -293,7 +293,7 @@ func TestFalse(t *testing.T) {
 		{
 			name:      "true value fails with message",
 			value:     true,
-			msg:       []string{"custom failure message"},
+			msg:       []any{"custom failure message"},
 			wantError: true,
 		},
 	}
@@ -411,7 +411,7 @@ func TestNotEqual(t *testing.T) {
 		name      string
 		actual    any
 		expected  any
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -430,7 +430,7 @@ func TestNotEqual(t *testing.T) {
 			name:      "different strings with message",
 			actual:    "hello",
 			expected:  "world",
-			msg:       []string{"string should differ"},
+			msg:       []any{"string should differ"},
 			wantError: false,
 		},
 		{
@@ -727,7 +727,7 @@ func TestTrue(t *testing.T) {
 	tests := []struct {
 		name      string
 		value     bool
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -743,7 +743,7 @@ func TestTrue(t *testing.T) {
 		{
 			name:      "false value fails with message",
 			value:     false,
-			msg:       []string{"custom failure message"},
+			msg:       []any{"custom failure message"},
 			wantError: true,
 		},
 	}

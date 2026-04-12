@@ -47,58 +47,58 @@ func wrap(t testing.TB) testing.TB {
 
 // -- Comparisons --
 
-func Equal[T any](t testing.TB, expected, actual T, msg ...string) {
-	assert.Equal(wrap(t), expected, actual, msg...)
+func Equal[T any](t testing.TB, expected, actual T, msgAndArgs ...any) {
+	assert.Equal(wrap(t), expected, actual, msgAndArgs...)
 }
 
-func NotEqual[T any](t testing.TB, expected, actual T, msg ...string) {
-	assert.NotEqual(wrap(t), expected, actual, msg...)
+func NotEqual[T any](t testing.TB, expected, actual T, msgAndArgs ...any) {
+	assert.NotEqual(wrap(t), expected, actual, msgAndArgs...)
 }
 
-func True(t testing.TB, value bool, msg ...string) {
-	assert.True(wrap(t), value, msg...)
+func True(t testing.TB, value bool, msgAndArgs ...any) {
+	assert.True(wrap(t), value, msgAndArgs...)
 }
 
-func False(t testing.TB, value bool, msg ...string) {
-	assert.False(wrap(t), value, msg...)
+func False(t testing.TB, value bool, msgAndArgs ...any) {
+	assert.False(wrap(t), value, msgAndArgs...)
 }
 
-func Nil(t testing.TB, value any, msg ...string) {
-	assert.Nil(wrap(t), value, msg...)
+func Nil(t testing.TB, value any, msgAndArgs ...any) {
+	assert.Nil(wrap(t), value, msgAndArgs...)
 }
 
-func NotNil(t testing.TB, value any, msg ...string) {
-	assert.NotNil(wrap(t), value, msg...)
+func NotNil(t testing.TB, value any, msgAndArgs ...any) {
+	assert.NotNil(wrap(t), value, msgAndArgs...)
 }
 
-func IsType(t testing.TB, expected, actual any, msg ...string) {
-	assert.IsType(wrap(t), expected, actual, msg...)
+func IsType(t testing.TB, expected, actual any, msgAndArgs ...any) {
+	assert.IsType(wrap(t), expected, actual, msgAndArgs...)
 }
 
-func Implements(t testing.TB, iface, value any, msg ...string) {
-	assert.Implements(wrap(t), iface, value, msg...)
+func Implements(t testing.TB, iface, value any, msgAndArgs ...any) {
+	assert.Implements(wrap(t), iface, value, msgAndArgs...)
 }
 
 // -- Errors --
 
-func Error(t testing.TB, err error, msg ...string) {
-	assert.Error(wrap(t), err, msg...)
+func Error(t testing.TB, err error, msgAndArgs ...any) {
+	assert.Error(wrap(t), err, msgAndArgs...)
 }
 
-func NoError(t testing.TB, err error, msg ...string) {
-	assert.NoError(wrap(t), err, msg...)
+func NoError(t testing.TB, err error, msgAndArgs ...any) {
+	assert.NoError(wrap(t), err, msgAndArgs...)
 }
 
-func EqualError(t testing.TB, err error, errString string, msg ...string) {
-	assert.EqualError(wrap(t), err, errString, msg...)
+func EqualError(t testing.TB, err error, errString string, msgAndArgs ...any) {
+	assert.EqualError(wrap(t), err, errString, msgAndArgs...)
 }
 
-func ErrorIs(t testing.TB, err, target error, msg ...string) {
-	assert.ErrorIs(wrap(t), err, target, msg...)
+func ErrorIs(t testing.TB, err, target error, msgAndArgs ...any) {
+	assert.ErrorIs(wrap(t), err, target, msgAndArgs...)
 }
 
-func ErrorAs(t testing.TB, err error, target any, msg ...string) {
-	assert.ErrorAs(wrap(t), err, target, msg...)
+func ErrorAs(t testing.TB, err error, target any, msgAndArgs ...any) {
+	assert.ErrorAs(wrap(t), err, target, msgAndArgs...)
 }
 
 // -- Panics --
@@ -107,8 +107,8 @@ func Panics(t testing.TB, fn func(), expectedMsg string) {
 	assert.Panics(wrap(t), fn, expectedMsg)
 }
 
-func NotPanics(t testing.TB, fn func(), msg ...string) {
-	assert.NotPanics(wrap(t), fn, msg...)
+func NotPanics(t testing.TB, fn func(), msgAndArgs ...any) {
+	assert.NotPanics(wrap(t), fn, msgAndArgs...)
 }
 
 func PanicsWithError(t testing.TB, fn func(), expectedMsg string) {
@@ -117,120 +117,120 @@ func PanicsWithError(t testing.TB, fn func(), expectedMsg string) {
 
 // -- Collections --
 
-func Contains[T any](t testing.TB, slice []T, element T, msg ...string) {
-	assert.Contains(wrap(t), slice, element, msg...)
+func Contains[T any](t testing.TB, slice []T, element T, msgAndArgs ...any) {
+	assert.Contains(wrap(t), slice, element, msgAndArgs...)
 }
 
-func NotContains[T any](t testing.TB, slice []T, element T, msg ...string) {
-	assert.NotContains(wrap(t), slice, element, msg...)
+func NotContains[T any](t testing.TB, slice []T, element T, msgAndArgs ...any) {
+	assert.NotContains(wrap(t), slice, element, msgAndArgs...)
 }
 
-func ElementsMatch[T any](t testing.TB, expected, actual []T, msg ...string) {
-	assert.ElementsMatch(wrap(t), expected, actual, msg...)
+func ElementsMatch[T any](t testing.TB, expected, actual []T, msgAndArgs ...any) {
+	assert.ElementsMatch(wrap(t), expected, actual, msgAndArgs...)
 }
 
-func Subset[T any](t testing.TB, list, subset []T, msg ...string) {
-	assert.Subset(wrap(t), list, subset, msg...)
+func Subset[T any](t testing.TB, list, subset []T, msgAndArgs ...any) {
+	assert.Subset(wrap(t), list, subset, msgAndArgs...)
 }
 
-func NotSubset[T any](t testing.TB, list, subset []T, msg ...string) {
-	assert.NotSubset(wrap(t), list, subset, msg...)
+func NotSubset[T any](t testing.TB, list, subset []T, msgAndArgs ...any) {
+	assert.NotSubset(wrap(t), list, subset, msgAndArgs...)
 }
 
-func Empty(t testing.TB, collection any, msg ...string) {
-	assert.Empty(wrap(t), collection, msg...)
+func Empty(t testing.TB, collection any, msgAndArgs ...any) {
+	assert.Empty(wrap(t), collection, msgAndArgs...)
 }
 
-func NotEmpty(t testing.TB, collection any, msg ...string) {
-	assert.NotEmpty(wrap(t), collection, msg...)
+func NotEmpty(t testing.TB, collection any, msgAndArgs ...any) {
+	assert.NotEmpty(wrap(t), collection, msgAndArgs...)
 }
 
-func Len(t testing.TB, collection any, expected int, msg ...string) {
-	assert.Len(wrap(t), collection, expected, msg...)
+func Len(t testing.TB, collection any, expected int, msgAndArgs ...any) {
+	assert.Len(wrap(t), collection, expected, msgAndArgs...)
 }
 
-func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) {
-	assert.HasKey(wrap(t), m, key, msg...)
+func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msgAndArgs ...any) {
+	assert.HasKey(wrap(t), m, key, msgAndArgs...)
 }
 
-func NotHasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) {
-	assert.NotHasKey(wrap(t), m, key, msg...)
+func NotHasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msgAndArgs ...any) {
+	assert.NotHasKey(wrap(t), m, key, msgAndArgs...)
 }
 
 // -- Strings --
 
-func StringContains(t testing.TB, s, substr string, msg ...string) {
-	assert.StringContains(wrap(t), s, substr, msg...)
+func StringContains(t testing.TB, s, substr string, msgAndArgs ...any) {
+	assert.StringContains(wrap(t), s, substr, msgAndArgs...)
 }
 
-func HasPrefix(t testing.TB, s, prefix string, msg ...string) {
-	assert.HasPrefix(wrap(t), s, prefix, msg...)
+func HasPrefix(t testing.TB, s, prefix string, msgAndArgs ...any) {
+	assert.HasPrefix(wrap(t), s, prefix, msgAndArgs...)
 }
 
-func HasSuffix(t testing.TB, s, suffix string, msg ...string) {
-	assert.HasSuffix(wrap(t), s, suffix, msg...)
+func HasSuffix(t testing.TB, s, suffix string, msgAndArgs ...any) {
+	assert.HasSuffix(wrap(t), s, suffix, msgAndArgs...)
 }
 
-func MatchRegexp(t testing.TB, s, pattern string, msg ...string) {
-	assert.MatchRegexp(wrap(t), s, pattern, msg...)
+func MatchRegexp(t testing.TB, s, pattern string, msgAndArgs ...any) {
+	assert.MatchRegexp(wrap(t), s, pattern, msgAndArgs...)
 }
 
 // -- Numerics --
 
-func Greater[T assert.Ordered](t testing.TB, e1, e2 T, msg ...string) {
-	assert.Greater(wrap(t), e1, e2, msg...)
+func Greater[T assert.Ordered](t testing.TB, e1, e2 T, msgAndArgs ...any) {
+	assert.Greater(wrap(t), e1, e2, msgAndArgs...)
 }
 
-func GreaterOrEqual[T assert.Ordered](t testing.TB, actual, min T, msg ...string) {
-	assert.GreaterOrEqual(wrap(t), actual, min, msg...)
+func GreaterOrEqual[T assert.Ordered](t testing.TB, actual, min T, msgAndArgs ...any) {
+	assert.GreaterOrEqual(wrap(t), actual, min, msgAndArgs...)
 }
 
-func Less[T assert.Ordered](t testing.TB, e1, e2 T, msg ...string) {
-	assert.Less(wrap(t), e1, e2, msg...)
+func Less[T assert.Ordered](t testing.TB, e1, e2 T, msgAndArgs ...any) {
+	assert.Less(wrap(t), e1, e2, msgAndArgs...)
 }
 
-func LessOrEqual[T assert.Ordered](t testing.TB, actual, max T, msg ...string) {
-	assert.LessOrEqual(wrap(t), actual, max, msg...)
+func LessOrEqual[T assert.Ordered](t testing.TB, actual, max T, msgAndArgs ...any) {
+	assert.LessOrEqual(wrap(t), actual, max, msgAndArgs...)
 }
 
-func Between[T assert.Ordered](t testing.TB, actual, min, max T, msg ...string) {
-	assert.Between(wrap(t), actual, min, max, msg...)
+func Between[T assert.Ordered](t testing.TB, actual, min, max T, msgAndArgs ...any) {
+	assert.Between(wrap(t), actual, min, max, msgAndArgs...)
 }
 
-func Positive[T assert.Number](t testing.TB, value T, msg ...string) {
-	assert.Positive(wrap(t), value, msg...)
+func Positive[T assert.Number](t testing.TB, value T, msgAndArgs ...any) {
+	assert.Positive(wrap(t), value, msgAndArgs...)
 }
 
-func Negative[T assert.Number](t testing.TB, value T, msg ...string) {
-	assert.Negative(wrap(t), value, msg...)
+func Negative[T assert.Number](t testing.TB, value T, msgAndArgs ...any) {
+	assert.Negative(wrap(t), value, msgAndArgs...)
 }
 
-func InDelta[T assert.Number](t testing.TB, expected, actual T, delta float64, msg ...string) {
-	assert.InDelta(wrap(t), expected, actual, delta, msg...)
+func InDelta[T assert.Number](t testing.TB, expected, actual T, delta float64, msgAndArgs ...any) {
+	assert.InDelta(wrap(t), expected, actual, delta, msgAndArgs...)
 }
 
 // -- JSON --
 
-func EqualJSON(t testing.TB, expected any, actualJSON string, msg ...string) {
-	assert.EqualJSON(wrap(t), expected, actualJSON, msg...)
+func EqualJSON(t testing.TB, expected any, actualJSON string, msgAndArgs ...any) {
+	assert.EqualJSON(wrap(t), expected, actualJSON, msgAndArgs...)
 }
 
-func JSONEqual(t testing.TB, expected, actual string, msg ...string) {
-	assert.JSONEqual(wrap(t), expected, actual, msg...)
+func JSONEqual(t testing.TB, expected, actual string, msgAndArgs ...any) {
+	assert.JSONEqual(wrap(t), expected, actual, msgAndArgs...)
 }
 
 // -- Files --
 
-func FileExists(t testing.TB, path string, msg ...string) {
-	assert.FileExists(wrap(t), path, msg...)
+func FileExists(t testing.TB, path string, msgAndArgs ...any) {
+	assert.FileExists(wrap(t), path, msgAndArgs...)
 }
 
-func DirExists(t testing.TB, path string, msg ...string) {
-	assert.DirExists(wrap(t), path, msg...)
+func DirExists(t testing.TB, path string, msgAndArgs ...any) {
+	assert.DirExists(wrap(t), path, msgAndArgs...)
 }
 
 // -- Time --
 
-func WithinDuration(t testing.TB, expected, actual time.Time, delta time.Duration, msg ...string) {
-	assert.WithinDuration(wrap(t), expected, actual, delta, msg...)
+func WithinDuration(t testing.TB, expected, actual time.Time, delta time.Duration, msgAndArgs ...any) {
+	assert.WithinDuration(wrap(t), expected, actual, delta, msgAndArgs...)
 }

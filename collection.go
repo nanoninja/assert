@@ -11,7 +11,7 @@ import (
 
 // Contains checks if a slice contains a specific element.
 // The comparison is done using reflection.DeepEqual.
-func Contains[T any](t testing.TB, slice []T, element T, msg ...string) {
+func Contains[T any](t testing.TB, slice []T, element T, msgAndArgs ...any) {
 	t.Helper()
 
 	for _, v := range slice {
@@ -21,13 +21,13 @@ func Contains[T any](t testing.TB, slice []T, element T, msg ...string) {
 	}
 
 	failCompare[any](t, element, slice, append(
-		[]string{"slice does not contain expected element"},
-		msg...)...)
+		[]any{"slice does not contain expected element"},
+		msgAndArgs...)...)
 }
 
 // Empty checks if a collection (slice, map, string, or array) is empty.
 // It provides a clear error message if the collection contains elements.
-func Empty(t testing.TB, collection any, msg ...string) {
+func Empty(t testing.TB, collection any, msgAndArgs ...any) {
 	t.Helper()
 	v := reflect.ValueOf(collection)
 
@@ -37,7 +37,7 @@ func Empty(t testing.TB, collection any, msg ...string) {
 			failCompare(t,
 				"empty collection",
 				fmt.Sprintf("collection with length %d", v.Len()),
-				msg...,
+				msgAndArgs...,
 			)
 		}
 	default:
@@ -46,7 +46,7 @@ func Empty(t testing.TB, collection any, msg ...string) {
 }
 
 // NotEmpty checks if a collection (slice, map, string, or array) is not empty
-func NotEmpty(t testing.TB, collection any, msg ...string) {
+func NotEmpty(t testing.TB, collection any, msgAndArgs ...any) {
 	t.Helper()
 
 	v := reflect.ValueOf(collection)
@@ -57,7 +57,7 @@ func NotEmpty(t testing.TB, collection any, msg ...string) {
 			failCompare(t,
 				"non-empty collection",
 				"empty collection",
-				msg...,
+				msgAndArgs...,
 			)
 		}
 	default:
@@ -66,29 +66,29 @@ func NotEmpty(t testing.TB, collection any, msg ...string) {
 }
 
 // HasKey checks if a map contains a specific key.
-func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) {
+func HasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msgAndArgs ...any) {
 	t.Helper()
 
 	if _, ok := m[key]; !ok {
 		failCompare[any](t, key, m, append(
-			[]string{"map does not contain expected key"},
-			msg...)...)
+			[]any{"map does not contain expected key"},
+			msgAndArgs...)...)
 	}
 }
 
 // NotHasKey checks that a map does NOT contain a specific key.
-func NotHasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msg ...string) {
+func NotHasKey[K comparable, V any](t testing.TB, m map[K]V, key K, msgAndArgs ...any) {
 	t.Helper()
 
 	if _, ok := m[key]; ok {
 		failCompare[any](t, fmt.Sprintf("map without key %v", key), m, append(
-			[]string{"map contains unexpected key"},
-			msg...)...)
+			[]any{"map contains unexpected key"},
+			msgAndArgs...)...)
 	}
 }
 
 // Len checks if a collection (slice, array, map, or string) has the expected length.
-func Len(t testing.TB, collection any, expected int, msg ...string) {
+func Len(t testing.TB, collection any, expected int, msgAndArgs ...any) {
 	t.Helper()
 
 	v := reflect.ValueOf(collection)
@@ -98,7 +98,7 @@ func Len(t testing.TB, collection any, expected int, msg ...string) {
 		reflect.Map,
 		reflect.String:
 		if v.Len() != expected {
-			failCompare(t, expected, v.Len(), append([]string{"unexpected length"}, msg...)...)
+			failCompare(t, expected, v.Len(), append([]any{"unexpected length"}, msgAndArgs...)...)
 		}
 	default:
 		t.Errorf("\nLen called with unsupported type: %T", collection)
@@ -107,26 +107,26 @@ func Len(t testing.TB, collection any, expected int, msg ...string) {
 
 // NotContains verifies that a slice does NOT contain an element.
 // Useful for ensuring exclusion of specific values.
-func NotContains[T any](t testing.TB, slice []T, element T, msg ...string) {
+func NotContains[T any](t testing.TB, slice []T, element T, msgAndArgs ...any) {
 	t.Helper()
 
 	for _, v := range slice {
 		if isEqual(v, element) {
-			failCompare[any](t, slice, fmt.Sprintf("should not contain %v", element), msg...)
+			failCompare[any](t, slice, fmt.Sprintf("should not contain %v", element), msgAndArgs...)
 			return
 		}
 	}
 }
 
 // ElementsMatch checks that two slices contain the same elements regardless of order.
-func ElementsMatch[T any](t testing.TB, expected, actual []T, msg ...string) {
+func ElementsMatch[T any](t testing.TB, expected, actual []T, msgAndArgs ...any) {
 	t.Helper()
 
 	if len(expected) != len(actual) {
 		failCompare[any](t,
 			fmt.Sprintf("slice with %d elements", len(expected)),
 			fmt.Sprintf("slice with %d elements", len(actual)),
-			append([]string{"slices have different lengths"}, msg...)...,
+			append([]any{"slices have different lengths"}, msgAndArgs...)...,
 		)
 		return
 	}
@@ -144,14 +144,14 @@ func ElementsMatch[T any](t testing.TB, expected, actual []T, msg ...string) {
 		}
 		if !found {
 			failCompare[any](t, expected, actual,
-				append([]string{"slices do not contain the same elements"}, msg...)...)
+				append([]any{"slices do not contain the same elements"}, msgAndArgs...)...)
 			return
 		}
 	}
 }
 
 // Subset checks that every element of subset is present in list.
-func Subset[T any](t testing.TB, list, subset []T, msg ...string) {
+func Subset[T any](t testing.TB, list, subset []T, msgAndArgs ...any) {
 	t.Helper()
 
 	for _, s := range subset {
@@ -164,14 +164,14 @@ func Subset[T any](t testing.TB, list, subset []T, msg ...string) {
 		}
 		if !found {
 			failCompare[any](t, list, subset,
-				append([]string{"subset contains elements not found in list"}, msg...)...)
+				append([]any{"subset contains elements not found in list"}, msgAndArgs...)...)
 			return
 		}
 	}
 }
 
 // NotSubset checks that subset is NOT entirely contained in list.
-func NotSubset[T any](t testing.TB, list, subset []T, msg ...string) {
+func NotSubset[T any](t testing.TB, list, subset []T, msgAndArgs ...any) {
 	t.Helper()
 
 	for _, s := range subset {
@@ -188,5 +188,5 @@ func NotSubset[T any](t testing.TB, list, subset []T, msg ...string) {
 	}
 
 	failCompare[any](t, list, subset,
-		append([]string{"expected subset not to be contained in list"}, msg...)...)
+		append([]any{"expected subset not to be contained in list"}, msgAndArgs...)...)
 }

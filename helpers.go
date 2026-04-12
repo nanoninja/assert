@@ -62,24 +62,37 @@ func (r *TestRecorder) HelperCalled() bool {
 	return r.helperCalled
 }
 
-func compare[T any](t testing.TB, expected, actual T, msg ...string) {
+func compare[T any](t testing.TB, expected, actual T, msgAndArgs ...any) {
 	t.Helper()
 
 	if !isEqual(expected, actual) {
-		failCompare(t, expected, actual, msg...)
+		failCompare(t, expected, actual, msgAndArgs...)
 	}
+}
+
+func formatMessage(msgAndArgs ...any) string {
+	if len(msgAndArgs) == 0 {
+		return ""
+	}
+	if msg, ok := msgAndArgs[0].(string); ok {
+		if len(msgAndArgs) > 1 {
+			return fmt.Sprintf(msg, msgAndArgs[1:]...)
+		}
+		return msg
+	}
+	return fmt.Sprint(msgAndArgs...)
 }
 
 // failCompare formats and outputs a detailed comparison error message for test failures.
 // It includes the location of the failure, types of values being compared,
 // and a clear visual representation of expected vs actual values.
-func failCompare[T any](t testing.TB, expected, actual T, msg ...string) {
+func failCompare[T any](t testing.TB, expected, actual T, msgAndArgs ...any) {
 	t.Helper()
 
 	var builder strings.Builder
 
-	if len(msg) > 0 && msg[0] != "" {
-		fmt.Fprintf(&builder, "\n Message: %s", msg[0])
+	if msg := formatMessage(msgAndArgs...); msg != "" {
+		fmt.Fprintf(&builder, "\n Message: %s", msg)
 	}
 
 	expectedType := reflect.TypeOf(expected)

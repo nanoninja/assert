@@ -10,7 +10,7 @@ func TestHasPrefix(t *testing.T) {
 		name      string
 		s         string
 		prefix    string
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -57,7 +57,7 @@ func TestHasSuffix(t *testing.T) {
 		name      string
 		s         string
 		suffix    string
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -104,7 +104,7 @@ func TestMatchRegexp(t *testing.T) {
 		name      string
 		s         string
 		pattern   string
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{

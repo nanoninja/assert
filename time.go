@@ -10,7 +10,7 @@ import (
 )
 
 // WithinDuration asserts that two time values are within a given duration of each other.
-func WithinDuration(t testing.TB, expected, actual time.Time, delta time.Duration, msg ...string) {
+func WithinDuration(t testing.TB, expected, actual time.Time, delta time.Duration, msgAndArgs ...any) {
 	t.Helper()
 
 	diff := expected.Sub(actual)
@@ -22,7 +22,7 @@ func WithinDuration(t testing.TB, expected, actual time.Time, delta time.Duratio
 		failCompare[any](t,
 			fmt.Sprintf("%v (±%v)", expected.Format(time.RFC3339), delta),
 			actual.Format(time.RFC3339),
-			append([]string{fmt.Sprintf("time difference %v exceeds delta %v", diff, delta)}, msg...)...,
+			append([]any{fmt.Sprintf("time difference %v exceeds delta %v", diff, delta)}, msgAndArgs...)...,
 		)
 	}
 }

@@ -465,7 +465,7 @@ func TestNotContains(t *testing.T) {
 		name      string
 		slice     []string
 		element   string
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -490,7 +490,7 @@ func TestNotContains(t *testing.T) {
 			name:      "element present with custom message",
 			slice:     []string{"a", "b", "c"},
 			element:   "c",
-			msg:       []string{"should not contain c"},
+			msg:       []any{"should not contain c"},
 			wantError: true,
 		},
 	}
