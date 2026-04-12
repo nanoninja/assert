@@ -517,6 +517,74 @@ func TestNotNil(t *testing.T) {
 	}
 }
 
+func TestIsType(t *testing.T) {
+	tests := []struct {
+		name      string
+		expected  any
+		actual    any
+		wantError bool
+	}{
+		{
+			name:      "same types",
+			expected:  42,
+			actual:    10,
+			wantError: false,
+		},
+		{
+			name:      "same struct types",
+			expected:  struct{ Name string }{},
+			actual:    struct{ Name string }{Name: "alice"},
+			wantError: false,
+		},
+		{
+			name:      "different types int vs string",
+			expected:  42,
+			actual:    "42",
+			wantError: true,
+		},
+		{
+			name:      "different types int vs float",
+			expected:  42,
+			actual:    42.0,
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			IsType(rec, tt.expected, tt.actual)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("IsType() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
+func TestImplements(t *testing.T) {
+	t.Run("implements interface", func(t *testing.T) {
+		rec := NewTestRecorder(t)
+
+		Implements(rec, (*error)(nil), fmt.Errorf("test"))
+
+		if rec.HasError() {
+			t.Error("Implements() recorded error for value that implements error")
+		}
+	})
+
+	t.Run("does not implement interface", func(t *testing.T) {
+		rec := NewTestRecorder(t)
+
+		Implements(rec, (*error)(nil), "not an error")
+
+		if !rec.HasError() {
+			t.Error("Implements() did not record error for value that does not implement error")
+		}
+	})
+}
+
 func TestPanics(t *testing.T) {
 	tests := []struct {
 		name      string

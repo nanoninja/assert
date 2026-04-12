@@ -276,6 +276,150 @@ func TestLen(t *testing.T) {
 	}
 }
 
+func TestElementsMatch(t *testing.T) {
+	tests := []struct {
+		name      string
+		expected  []int
+		actual    []int
+		wantError bool
+	}{
+		{
+			name:      "same elements same order",
+			expected:  []int{1, 2, 3},
+			actual:    []int{1, 2, 3},
+			wantError: false,
+		},
+		{
+			name:      "same elements different order",
+			expected:  []int{1, 2, 3},
+			actual:    []int{3, 1, 2},
+			wantError: false,
+		},
+		{
+			name:      "different lengths",
+			expected:  []int{1, 2, 3},
+			actual:    []int{1, 2},
+			wantError: true,
+		},
+		{
+			name:      "different elements",
+			expected:  []int{1, 2, 3},
+			actual:    []int{1, 2, 4},
+			wantError: true,
+		},
+		{
+			name:      "duplicate elements handled correctly",
+			expected:  []int{1, 1, 2},
+			actual:    []int{1, 2, 2},
+			wantError: true,
+		},
+		{
+			name:      "empty slices",
+			expected:  []int{},
+			actual:    []int{},
+			wantError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			ElementsMatch(rec, tt.expected, tt.actual)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("ElementsMatch() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
+func TestSubset(t *testing.T) {
+	tests := []struct {
+		name      string
+		list      []int
+		subset    []int
+		wantError bool
+	}{
+		{
+			name:      "subset contained in list",
+			list:      []int{1, 2, 3, 4, 5},
+			subset:    []int{2, 4},
+			wantError: false,
+		},
+		{
+			name:      "subset equals list",
+			list:      []int{1, 2, 3},
+			subset:    []int{1, 2, 3},
+			wantError: false,
+		},
+		{
+			name:      "element not in list",
+			list:      []int{1, 2, 3},
+			subset:    []int{2, 5},
+			wantError: true,
+		},
+		{
+			name:      "empty subset",
+			list:      []int{1, 2, 3},
+			subset:    []int{},
+			wantError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			Subset(rec, tt.list, tt.subset)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("Subset() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
+func TestNotSubset(t *testing.T) {
+	tests := []struct {
+		name      string
+		list      []int
+		subset    []int
+		wantError bool
+	}{
+		{
+			name:      "subset not contained in list",
+			list:      []int{1, 2, 3},
+			subset:    []int{2, 5},
+			wantError: false,
+		},
+		{
+			name:      "subset fully contained",
+			list:      []int{1, 2, 3, 4, 5},
+			subset:    []int{2, 4},
+			wantError: true,
+		},
+		{
+			name:      "empty subset is always contained",
+			list:      []int{1, 2, 3},
+			subset:    []int{},
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := NewTestRecorder(t)
+
+			NotSubset(rec, tt.list, tt.subset)
+
+			if tt.wantError != rec.HasError() {
+				t.Errorf("NotSubset() error = %v, want %v", rec.HasError(), tt.wantError)
+			}
+		})
+	}
+}
+
 func TestNotContains(t *testing.T) {
 	tests := []struct {
 		name      string

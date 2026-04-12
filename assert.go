@@ -6,6 +6,7 @@ package assert
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -105,6 +106,39 @@ func NotNil(t testing.TB, value any, msg ...string) {
 
 	if isNil(value) {
 		failCompare[any](t, "non-nil value", nil, msg...)
+	}
+}
+
+// IsType asserts that the actual value is of the same type as the expected value.
+func IsType(t testing.TB, expected, actual any, msg ...string) {
+	t.Helper()
+
+	expectedType := reflect.TypeOf(expected)
+	actualType := reflect.TypeOf(actual)
+
+	if expectedType != actualType {
+		failCompare(t, expectedType, actualType,
+			append([]string{"unexpected type"}, msg...)...)
+	}
+}
+
+// Implements asserts that a value implements a given interface.
+// The iface parameter must be a pointer to an interface type: (*MyInterface)(nil).
+//
+// Example:
+//
+//	assert.Implements(t, (*io.Reader)(nil), myReader)
+func Implements(t testing.TB, iface, value any, msg ...string) {
+	t.Helper()
+
+	ifaceType := reflect.TypeOf(iface).Elem()
+	valueType := reflect.TypeOf(value)
+
+	if !valueType.Implements(ifaceType) {
+		failCompare[any](t,
+			fmt.Sprintf("value implementing %s", ifaceType),
+			valueType,
+			append([]string{"value does not implement interface"}, msg...)...)
 	}
 }
 

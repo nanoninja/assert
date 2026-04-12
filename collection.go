@@ -106,3 +106,76 @@ func NotContains[T any](t testing.TB, slice []T, element T, msg ...string) {
 		}
 	}
 }
+
+// ElementsMatch checks that two slices contain the same elements regardless of order.
+func ElementsMatch[T any](t testing.TB, expected, actual []T, msg ...string) {
+	t.Helper()
+
+	if len(expected) != len(actual) {
+		failCompare[any](t,
+			fmt.Sprintf("slice with %d elements", len(expected)),
+			fmt.Sprintf("slice with %d elements", len(actual)),
+			append([]string{"slices have different lengths"}, msg...)...,
+		)
+		return
+	}
+
+	used := make([]bool, len(actual))
+
+	for _, e := range expected {
+		found := false
+		for i, a := range actual {
+			if !used[i] && isEqual(e, a) {
+				used[i] = true
+				found = true
+				break
+			}
+		}
+		if !found {
+			failCompare[any](t, expected, actual,
+				append([]string{"slices do not contain the same elements"}, msg...)...)
+			return
+		}
+	}
+}
+
+// Subset checks that every element of subset is present in list.
+func Subset[T any](t testing.TB, list, subset []T, msg ...string) {
+	t.Helper()
+
+	for _, s := range subset {
+		found := false
+		for _, l := range list {
+			if isEqual(s, l) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			failCompare[any](t, list, subset,
+				append([]string{"subset contains elements not found in list"}, msg...)...)
+			return
+		}
+	}
+}
+
+// NotSubset checks that subset is NOT entirely contained in list.
+func NotSubset[T any](t testing.TB, list, subset []T, msg ...string) {
+	t.Helper()
+
+	for _, s := range subset {
+		found := false
+		for _, l := range list {
+			if isEqual(s, l) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return
+		}
+	}
+
+	failCompare[any](t, list, subset,
+		append([]string{"expected subset not to be contained in list"}, msg...)...)
+}
