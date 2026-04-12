@@ -89,7 +89,7 @@ func TestEqual(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
 
-			Equal(rec, tt.actual, tt.expected, tt.msg...)
+			Equal(rec, tt.expected, tt.actual, tt.msg...)
 
 			if tt.wantError != rec.HasError() {
 				t.Errorf("Equal() error = %v, want %v", rec.HasError(), tt.wantError)
@@ -99,54 +99,39 @@ func TestEqual(t *testing.T) {
 }
 
 func TestEqualError(t *testing.T) {
-	errOne := errors.New("error one")
-	errTwo := errors.New("error two")
-
 	tests := []struct {
 		name      string
-		actual    error
-		expected  error
+		err       error
+		errString string
 		wantError bool
 	}{
 		{
-			name:      "same errors",
-			actual:    errOne,
-			expected:  errOne,
+			name:      "matching error message",
+			err:       errors.New("error one"),
+			errString: "error one",
 			wantError: false,
 		},
 		{
-			name:      "different errors",
-			actual:    errOne,
-			expected:  errTwo,
+			name:      "different error message",
+			err:       errors.New("error one"),
+			errString: "error two",
 			wantError: true,
 		},
 		{
-			name:      "actual is nil",
-			actual:    nil,
-			expected:  errOne,
+			name:      "nil error",
+			err:       nil,
+			errString: "error one",
 			wantError: true,
-		},
-		{
-			name:      "expected is nil",
-			actual:    errOne,
-			expected:  nil,
-			wantError: true,
-		},
-		{
-			name:      "both nil",
-			actual:    nil,
-			expected:  nil,
-			wantError: false,
 		},
 	}
 
 	for _, tt := range tests {
 		rec := NewTestRecorder(t)
 
-		EqualError(rec, tt.actual, tt.expected)
+		EqualError(rec, tt.err, tt.errString)
 
 		if tt.wantError != rec.HasError() {
-			t.Errorf("Error() error %v, want %v", rec.HasError(), tt.wantError)
+			t.Errorf("EqualError() error %v, want %v", rec.HasError(), tt.wantError)
 		}
 	}
 }
@@ -460,7 +445,7 @@ func TestNotEqual(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
 
-			NotEqual(rec, tt.actual, tt.expected, tt.msg...)
+			NotEqual(rec, tt.expected, tt.actual, tt.msg...)
 
 			if tt.wantError != rec.HasError() {
 				t.Errorf("NotEqual() error %v, want %v", rec.HasError(), tt.wantError)

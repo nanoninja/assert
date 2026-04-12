@@ -30,13 +30,13 @@ func NewTestRecorder(t *testing.T) *TestRecorder {
 }
 
 // Error records that an error occurred with the given arguments
-func (r *TestRecorder) Error(args ...interface{}) {
+func (r *TestRecorder) Error(args ...any) {
 	r.errorCalled = true
 	r.errorMessage = fmt.Sprint(args...)
 }
 
 // Errorf records that an error occurred with the formatted message
-func (r *TestRecorder) Errorf(format string, args ...interface{}) {
+func (r *TestRecorder) Errorf(format string, args ...any) {
 	r.errorCalled = true
 	r.errorMessage = fmt.Sprintf(format, args...)
 }
@@ -62,7 +62,7 @@ func (r *TestRecorder) HelperCalled() bool {
 	return r.helperCalled
 }
 
-func compare[T any](t testing.TB, actual, expected T, msg ...string) {
+func compare[T any](t testing.TB, expected, actual T, msg ...string) {
 	t.Helper()
 
 	if !isEqual(expected, actual) {
@@ -73,22 +73,20 @@ func compare[T any](t testing.TB, actual, expected T, msg ...string) {
 // failCompare formats and outputs a detailed comparison error message for test failures.
 // It includes the location of the failure, types of values being compared,
 // and a clear visual representation of expected vs actual values.
-func failCompare[T any](t testing.TB, actual, expected T, msg ...string) {
+func failCompare[T any](t testing.TB, expected, actual T, msg ...string) {
 	t.Helper()
 
 	var builder strings.Builder
 
 	if len(msg) > 0 && msg[0] != "" {
-		builder.WriteString(fmt.Sprintf("\n Message: %s", msg[0]))
+		fmt.Fprintf(&builder, "\n Message: %s", msg[0])
 	}
 
-	// Get the types of both values for more informative error messages
-	exptectedType := reflect.TypeOf(actual)
-	actualType := reflect.TypeOf(expected)
+	expectedType := reflect.TypeOf(expected)
+	actualType := reflect.TypeOf(actual)
 
-	// Build the error messageyy
-	builder.WriteString(fmt.Sprintf("\nExpected: (%v) %#v\n", exptectedType, expected))
-	builder.WriteString(fmt.Sprintf("  Actual: (%v) %#v\n", actualType, actual))
+	fmt.Fprintf(&builder, "\nExpected: (%v) %#v\n", expectedType, expected)
+	fmt.Fprintf(&builder, "  Actual: (%v) %#v\n", actualType, actual)
 
 	t.Error(builder.String())
 }

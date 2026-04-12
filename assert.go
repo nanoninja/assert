@@ -10,31 +10,28 @@ import (
 )
 
 // Equal checks if two values are equal using reflection.DeepEqual.
-// It provides detailed error messages showing both values and their types when they differ.
-func Equal[T any](t testing.TB, actual, expected T, msg ...string) {
+// Parameters follow the same convention as testify: expected first, actual second.
+func Equal[T any](t testing.TB, expected, actual T, msg ...string) {
 	t.Helper()
 
 	compare(t, expected, actual, msg...)
 }
 
-// EqualError checks if an error matches the expected error.
+// EqualError checks if an error's message matches the expected string.
 // It handles nil errors appropriately and provides clear error messages.
-func EqualError(t testing.TB, actual, expected error) {
+func EqualError(t testing.TB, err error, errString string, msg ...string) {
 	t.Helper()
 
-	if actual == nil && expected != nil {
-		failCompare(t, expected, actual, "expected error but got nil")
+	if err == nil {
+		failCompare[any](t, errString, nil, append([]string{"expected an error"}, msg...)...)
+		return
 	}
-	if actual != nil && expected == nil {
-		failCompare(t, expected, actual, "expected nil error")
-	}
-	if actual != expected {
-		failCompare(t, expected, actual)
+	if err.Error() != errString {
+		failCompare(t, errString, err.Error(), msg...)
 	}
 }
 
 // Error asserts that an error occurred (i.e., the error is not nil).
-// It fails the test if the error is nil, providing a clear error message.
 func Error(t testing.TB, err error, msg ...string) {
 	t.Helper()
 
@@ -44,48 +41,42 @@ func Error(t testing.TB, err error, msg ...string) {
 }
 
 // ErrorAs asserts that err can be converted to target type using errors.As.
-// The target must be a pointer to an error type.
 func ErrorAs(t testing.TB, err error, target any, msg ...string) {
 	t.Helper()
 
 	if !errors.As(err, target) {
-		failCompare[any](t, err, fmt.Sprintf("error matching type %T", target), msg...)
+		failCompare[any](t, fmt.Sprintf("error matching type %T", target), err, msg...)
 	}
 }
 
 // ErrorIs asserts that err matches target using errors.Is.
-// This is particularly useful when working with wrapped errors.
 func ErrorIs(t testing.TB, err, target error, msg ...string) {
 	t.Helper()
 
 	if !errors.Is(err, target) {
-		failCompare[any](t, err, fmt.Sprintf("error chain containing %v", target), msg...)
+		failCompare[any](t, fmt.Sprintf("error chain containing %v", target), err, msg...)
 	}
 }
 
 // False asserts that a boolean value is false.
-// It provides a clear error message with the source location and optional custom message.
 func False(t testing.TB, value bool, msg ...string) {
 	t.Helper()
 
 	if value {
-		// Using failCompare with any to handle mixed type comparisons in error message
 		failCompare(t, false, value, msg...)
 	}
 }
 
-// Nil checks if a value is nil, handling different types appropriately
-// including interfaces, slices, maps, and pointers.
-func Nil(t testing.TB, value any) {
+// Nil checks if a value is nil.
+func Nil(t testing.TB, value any, msg ...string) {
 	t.Helper()
 
 	if !isNil(value) {
-		failCompare(t, value, nil)
+		failCompare(t, nil, value, msg...)
 	}
 }
 
 // NoError asserts that no error occurred (i.e., the error is nil).
-// It fails the test if an error is not nil, providing a clear error message showing the unexpected error.
 func NoError(t testing.TB, err error, msg ...string) {
 	t.Helper()
 
@@ -95,12 +86,11 @@ func NoError(t testing.TB, err error, msg ...string) {
 }
 
 // NotEqual asserts that two values are not equal.
-// This is particularly useful when testing that a value has changed
-// or that distinct objects remain separate.
-func NotEqual[T any](t testing.TB, actual, expected T, msg ...string) {
+// Parameters follow the same convention as testify: expected first, actual second.
+func NotEqual[T any](t testing.TB, expected, actual T, msg ...string) {
 	t.Helper()
 
-	if isEqual(actual, expected) {
+	if isEqual(expected, actual) {
 		failCompare(t,
 			"values to be different",
 			fmt.Sprintf("both values are equal: %v", actual),
@@ -109,13 +99,12 @@ func NotEqual[T any](t testing.TB, actual, expected T, msg ...string) {
 	}
 }
 
-// NotNil checks if a value is not nil, providing a clear error message
-// when the value is unexpectedly nil.
-func NotNil(t testing.TB, value any) {
+// NotNil checks if a value is not nil.
+func NotNil(t testing.TB, value any, msg ...string) {
 	t.Helper()
 
 	if isNil(value) {
-		t.Error("\nexpected value to not be nil")
+		failCompare[any](t, "non-nil value", nil, msg...)
 	}
 }
 
@@ -138,12 +127,10 @@ func Panics(t testing.TB, fn func(), expectedMsg string) {
 }
 
 // True asserts that a boolean value is true.
-// It provides a clear error message with the source location and optional custom message.
 func True(t testing.TB, value bool, msg ...string) {
 	t.Helper()
 
 	if !value {
-		// Using failCompare with any to handle mixed type comparisons in error message
 		failCompare(t, true, value, msg...)
 	}
 }

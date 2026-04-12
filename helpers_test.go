@@ -53,41 +53,41 @@ func TestCompare(t *testing.T) {
 func TestFailCompare(t *testing.T) {
 	tests := []struct {
 		name      string
-		actual    any
 		expected  any
+		actual    any
 		msg       []string
 		wantParts []string
 	}{
 		{
 			name:     "basic types with message",
-			actual:   42,
-			expected: 43,
+			expected: 42,
+			actual:   43,
 			msg:      []string{"test message"},
 			wantParts: []string{
 				"Message: test message",
-				"Actual: (int) 42",
-				"Expected: (int) 43",
+				"Expected: (int) 42",
+				"Actual: (int) 43",
 			},
 		},
 		{
 			name:     "without message",
-			actual:   "hello",
-			expected: "world",
+			expected: "hello",
+			actual:   "world",
 			msg:      nil,
 			wantParts: []string{
-				"Actual: (string) \"hello\"",
-				"Expected: (string) \"world\"",
+				"Expected: (string) \"hello\"",
+				"Actual: (string) \"world\"",
 			},
 		},
 		{
 			name:     "complex types",
-			actual:   []int{1, 2},
-			expected: []int{3, 4},
+			expected: []int{1, 2},
+			actual:   []int{3, 4},
 			msg:      []string{"slice comparison"},
 			wantParts: []string{
 				"Message: slice comparison",
-				"Actual: ([]int) []int{1, 2}",
-				"Expected: ([]int) []int{3, 4}",
+				"Expected: ([]int) []int{1, 2}",
+				"Actual: ([]int) []int{3, 4}",
 			},
 		},
 	}
@@ -96,7 +96,7 @@ func TestFailCompare(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rec := NewTestRecorder(t)
 
-			failCompare(rec, tt.actual, tt.expected, tt.msg...)
+			failCompare(rec, tt.expected, tt.actual, tt.msg...)
 
 			if !rec.HasError() {
 				t.Error("failCompare() did not record error")
@@ -172,7 +172,7 @@ func TestIsNil(t *testing.T) {
 	var nilPtr *string
 	var nilSlice []string
 	var nilMap map[string]int
-	var nilInterface interface{}
+	var nilInterface any
 	nonNilPtr := new(string)
 
 	tests := []struct {
