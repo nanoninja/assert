@@ -3,7 +3,7 @@
 A lightweight, type-safe assertion library for Go tests — familiar API, zero dependencies.
 
 [![Golang](https://img.shields.io/badge/Go-%3E%3D%201.21-%2300ADD8.svg)](https://go.dev/)
-[![Tests](https://github.com/nanoninja/assert/actions/workflows/ci.yaml/badge.svg)](https://github.com/nanoninja/assert/actions)
+[![Tests](https://github.com/nanoninja/assert/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/nanoninja/assert/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/nanoninja/assert/branch/main/graph/badge.svg)](https://codecov.io/gh/nanoninja/assert)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nanoninja/assert)](https://goreportcard.com/report/github.com/nanoninja/assert)
 [![Go Reference](https://pkg.go.dev/badge/github.com/nanoninja/assert.svg)](https://pkg.go.dev/github.com/nanoninja/assert)
