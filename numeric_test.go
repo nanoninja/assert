@@ -151,7 +151,7 @@ func TestGreaterOrEqual(t *testing.T) {
 		name      string
 		actual    int
 		min       int
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{
@@ -198,7 +198,7 @@ func TestLessOrEqual(t *testing.T) {
 		name      string
 		actual    int
 		max       int
-		msg       []string
+		msg       []any
 		wantError bool
 	}{
 		{

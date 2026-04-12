@@ -12,105 +12,105 @@ import (
 
 // Equal checks if two values are equal using reflection.DeepEqual.
 // Parameters follow the same convention as testify: expected first, actual second.
-func Equal[T any](t testing.TB, expected, actual T, msg ...string) {
+func Equal[T any](t testing.TB, expected, actual T, msgAndArgs ...any) {
 	t.Helper()
 
-	compare(t, expected, actual, msg...)
+	compare(t, expected, actual, msgAndArgs...)
 }
 
 // EqualError checks if an error's message matches the expected string.
 // It handles nil errors appropriately and provides clear error messages.
-func EqualError(t testing.TB, err error, errString string, msg ...string) {
+func EqualError(t testing.TB, err error, errString string, msgAndArgs ...any) {
 	t.Helper()
 
 	if err == nil {
-		failCompare[any](t, errString, nil, append([]string{"expected an error"}, msg...)...)
+		failCompare[any](t, errString, nil, append([]any{"expected an error"}, msgAndArgs...)...)
 		return
 	}
 	if err.Error() != errString {
-		failCompare(t, errString, err.Error(), msg...)
+		failCompare(t, errString, err.Error(), msgAndArgs...)
 	}
 }
 
 // Error asserts that an error occurred (i.e., the error is not nil).
-func Error(t testing.TB, err error, msg ...string) {
+func Error(t testing.TB, err error, msgAndArgs ...any) {
 	t.Helper()
 
 	if isNil(err) {
-		failCompare[any](t, "non-nil error", nil, append([]string{"expected an error"}, msg...)...)
+		failCompare[any](t, "non-nil error", nil, append([]any{"expected an error"}, msgAndArgs...)...)
 	}
 }
 
 // ErrorAs asserts that err can be converted to target type using errors.As.
-func ErrorAs(t testing.TB, err error, target any, msg ...string) {
+func ErrorAs(t testing.TB, err error, target any, msgAndArgs ...any) {
 	t.Helper()
 
 	if !errors.As(err, target) {
-		failCompare[any](t, fmt.Sprintf("error matching type %T", target), err, msg...)
+		failCompare[any](t, fmt.Sprintf("error matching type %T", target), err, msgAndArgs...)
 	}
 }
 
 // ErrorIs asserts that err matches target using errors.Is.
-func ErrorIs(t testing.TB, err, target error, msg ...string) {
+func ErrorIs(t testing.TB, err, target error, msgAndArgs ...any) {
 	t.Helper()
 
 	if !errors.Is(err, target) {
-		failCompare[any](t, fmt.Sprintf("error chain containing %v", target), err, msg...)
+		failCompare[any](t, fmt.Sprintf("error chain containing %v", target), err, msgAndArgs...)
 	}
 }
 
 // False asserts that a boolean value is false.
-func False(t testing.TB, value bool, msg ...string) {
+func False(t testing.TB, value bool, msgAndArgs ...any) {
 	t.Helper()
 
 	if value {
-		failCompare(t, false, value, msg...)
+		failCompare(t, false, value, msgAndArgs...)
 	}
 }
 
 // Nil checks if a value is nil.
-func Nil(t testing.TB, value any, msg ...string) {
+func Nil(t testing.TB, value any, msgAndArgs ...any) {
 	t.Helper()
 
 	if !isNil(value) {
-		failCompare(t, nil, value, msg...)
+		failCompare(t, nil, value, msgAndArgs...)
 	}
 }
 
 // NoError asserts that no error occurred (i.e., the error is nil).
-func NoError(t testing.TB, err error, msg ...string) {
+func NoError(t testing.TB, err error, msgAndArgs ...any) {
 	t.Helper()
 
 	if !isNil(err) {
-		failCompare[any](t, nil, err, append([]string{"unexpected error"}, msg...)...)
+		failCompare[any](t, nil, err, append([]any{"unexpected error"}, msgAndArgs...)...)
 	}
 }
 
 // NotEqual asserts that two values are not equal.
 // Parameters follow the same convention as testify: expected first, actual second.
-func NotEqual[T any](t testing.TB, expected, actual T, msg ...string) {
+func NotEqual[T any](t testing.TB, expected, actual T, msgAndArgs ...any) {
 	t.Helper()
 
 	if isEqual(expected, actual) {
 		failCompare(t,
 			"values to be different",
 			fmt.Sprintf("both values are equal: %v", actual),
-			msg...,
+			msgAndArgs...,
 		)
 	}
 }
 
 // NotNil checks if a value is not nil.
-func NotNil(t testing.TB, value any, msg ...string) {
+func NotNil(t testing.TB, value any, msgAndArgs ...any) {
 	t.Helper()
 
 	if isNil(value) {
-		failCompare[any](t, "non-nil value", nil, msg...)
+		failCompare[any](t, "non-nil value", nil, msgAndArgs...)
 	}
 }
 
 // IsType asserts that the actual value is of the same type as the expected value.
-func IsType(t testing.TB, expected, actual any, msg ...string) {
+func IsType(t testing.TB, expected, actual any, msgAndArgs ...any) {
 	t.Helper()
 
 	expectedType := reflect.TypeOf(expected)
@@ -118,7 +118,7 @@ func IsType(t testing.TB, expected, actual any, msg ...string) {
 
 	if expectedType != actualType {
 		failCompare(t, expectedType, actualType,
-			append([]string{"unexpected type"}, msg...)...)
+			append([]any{"unexpected type"}, msgAndArgs...)...)
 	}
 }
 
@@ -128,7 +128,7 @@ func IsType(t testing.TB, expected, actual any, msg ...string) {
 // Example:
 //
 //	assert.Implements(t, (*io.Reader)(nil), myReader)
-func Implements(t testing.TB, iface, value any, msg ...string) {
+func Implements(t testing.TB, iface, value any, msgAndArgs ...any) {
 	t.Helper()
 
 	ifaceType := reflect.TypeOf(iface).Elem()
@@ -138,7 +138,7 @@ func Implements(t testing.TB, iface, value any, msg ...string) {
 		failCompare[any](t,
 			fmt.Sprintf("value implementing %s", ifaceType),
 			valueType,
-			append([]string{"value does not implement interface"}, msg...)...)
+			append([]any{"value does not implement interface"}, msgAndArgs...)...)
 	}
 }
 
@@ -161,7 +161,7 @@ func Panics(t testing.TB, fn func(), expectedMsg string) {
 }
 
 // NotPanics verifies that a function does not panic.
-func NotPanics(t testing.TB, fn func(), msg ...string) {
+func NotPanics(t testing.TB, fn func(), msgAndArgs ...any) {
 	t.Helper()
 
 	defer func() {
@@ -169,7 +169,7 @@ func NotPanics(t testing.TB, fn func(), msg ...string) {
 			failCompare[any](t,
 				"no panic",
 				fmt.Sprint(r),
-				append([]string{"unexpected panic"}, msg...)...,
+				append([]any{"unexpected panic"}, msgAndArgs...)...,
 			)
 		}
 	}()
@@ -200,10 +200,10 @@ func PanicsWithError(t testing.TB, fn func(), expectedMsg string) {
 }
 
 // True asserts that a boolean value is true.
-func True(t testing.TB, value bool, msg ...string) {
+func True(t testing.TB, value bool, msgAndArgs ...any) {
 	t.Helper()
 
 	if !value {
-		failCompare(t, true, value, msg...)
+		failCompare(t, true, value, msgAndArgs...)
 	}
 }

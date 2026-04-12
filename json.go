@@ -10,7 +10,7 @@ import (
 
 // EqualJSON asserts that a Go value marshals to a JSON string semantically equal
 // to the expected JSON string, ignoring key order and whitespace.
-func EqualJSON(t testing.TB, expected any, actualJSON string, msg ...string) {
+func EqualJSON(t testing.TB, expected any, actualJSON string, msgAndArgs ...any) {
 	t.Helper()
 
 	data, err := json.Marshal(expected)
@@ -19,12 +19,12 @@ func EqualJSON(t testing.TB, expected any, actualJSON string, msg ...string) {
 		return
 	}
 
-	JSONEqual(t, string(data), actualJSON, msg...)
+	JSONEqual(t, string(data), actualJSON, msgAndArgs...)
 }
 
 // JSONEqual asserts that two JSON strings are semantically equal,
 // ignoring key order and whitespace differences.
-func JSONEqual(t testing.TB, expected, actual string, msg ...string) {
+func JSONEqual(t testing.TB, expected, actual string, msgAndArgs ...any) {
 	t.Helper()
 
 	var expectedObj any
@@ -42,6 +42,6 @@ func JSONEqual(t testing.TB, expected, actual string, msg ...string) {
 
 	if !isEqual(expectedObj, actualObj) {
 		failCompare(t, expected, actual,
-			append([]string{"JSON values are not equal"}, msg...)...)
+			append([]any{"JSON values are not equal"}, msgAndArgs...)...)
 	}
 }
