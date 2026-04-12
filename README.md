@@ -14,6 +14,7 @@ A lightweight, type-safe assertion library for Go tests — familiar API, zero d
 - Familiar API — same conventions as testify (`expected` first, `actual` second)
 - Type-safe using Go generics
 - Two packages: `assert` (continues on failure) and `require` (stops immediately)
+- Optional formatted messages on every assertion: `"got %d, want %d", actual, expected`
 - No external dependencies
 - Clear, structured error messages
 
@@ -55,6 +56,13 @@ func TestCreateUser(t *testing.T) {
 ```
 
 ## Usage
+
+All assertion functions accept an optional formatted message as last argument, following the same convention as `fmt.Sprintf`:
+
+```go
+assert.Equal(t, expected, actual)                                      // no message
+assert.Equal(t, expected, actual, "user %d is invalid", userID)        // formatted message
+```
 
 ### Comparisons
 
