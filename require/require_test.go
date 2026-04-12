@@ -483,7 +483,9 @@ func TestFileExists(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	f.Close()
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
 
 	rec := newRecorder(t)
 	require.FileExists(rec, f.Name()+".nonexistent")
