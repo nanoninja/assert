@@ -64,6 +64,13 @@ assert.Equal(t, expected, actual)                                      // no mes
 assert.Equal(t, expected, actual, "user %d is invalid", userID)        // formatted message
 ```
 
+Each assertion also has an `f`-suffixed variant with an explicit `(format string, args ...any)` signature, which is safe to use with `go vet`:
+
+```go
+assert.Equalf(t, expected, actual, "user %d is invalid", userID)
+assert.NoErrorf(t, err, "step %s failed", stepName)
+```
+
 ### Comparisons
 
 ```go
@@ -182,4 +189,4 @@ Expected: (int) 5
 
 ## License
 
-BSD 3-Clause. See [LICENSE](LICENSE).
+This project is licensed under the BSD 3-Clause License. See the [LICENSE](LICENSE) file for details.
